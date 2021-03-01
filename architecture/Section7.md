@@ -22,7 +22,7 @@ The client and server may be required to sign certain messages in order to provi
 
 (NOTE: nonces are not shown).
 
-#### 7.1. Transfer Commence Message
+#### 7.1. Transfer Commence Message (Request)
 
 This message is sent from the client (sender gateway) to the Transfer Request Endpoint at the server.	It signals to the server that the client is ready to start the transfer of the digital asset.
 
@@ -40,15 +40,28 @@ The parameters of this message consists of the following:
 
 - recipient_dlt_system REQUIRED.	This is the identifier of the destination DLT system behind the server.
 
+- client_identity_pubkey REQUIRED. The gateway who sent this message.
+-
+- server_identity_pubkey REQUIRED. The gateway for whom this message is intended.
+
 - hash_asset_profile REQUIRED.	This is the hash of the asset profile previously agreed upon.
 
 - asset_unit REQUIRED.	This is the unit amount of the asset being transferred, previously agreed upon.
-
-- client_identity REQUIRED.	This is the device identity of the client (sender gateway).
-  
-- server_identity REQUIRED.	This is the device identity of the server (recipient gateway).
+-
+- hash_prev_message REQUIRED. The has of the last message in Phase 1.
 
 - client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
 
+- client_signature REQUIRED. The gateway signature (transmiting gateway).
 
-#### 7.2. Transfer Commence Response
+
+#### 7.2. Transfer Commence Message (Response)
+
+#### 7.3. Lock Evidence Message (Request)
+
+#### 7.4. Lock-evidence Receipt Message (Response)
+
+
+
+
+
