@@ -24,3 +24,31 @@ The client and server may be required to sign certain messages in order to provi
 
 #### 7.1. Transfer Commence Message
 
+This message is sent from the client (sender gateway) to the Transfer Request Endpoint at the server.	It signals to the server that the client is ready to start the transfer of the digital asset.
+
+The message must contain claims related to the information from the previous flow (Phase 1).	It must be signed by the client (sender gateway).
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:transfer-commence-msg
+
+- originator_pubkey REQUIRED.	This is the public key of the asset owner (originator) in the origin DLT system.
+
+- beneficiary_pubkey REQUIRED.	This is the public key of the beneficiary in the destination DLT system.
+
+- sender_dlt_system REQUIRED.	This is the identifier of the origin DLT system behind the client.
+
+- recipient_dlt_system REQUIRED.	This is the identifier of the destination DLT system behind the server.
+
+- hash_asset_profile REQUIRED.	This is the hash of the asset profile previously agreed upon.
+
+- asset_unit REQUIRED.	This is the unit amount of the asset being transferred, previously agreed upon.
+
+- client_identity REQUIRED.	This is the device identity of the client (sender gateway).
+  
+- server_identity REQUIRED.	This is the device identity of the server (recipient gateway).
+
+- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+
+
+#### 7.2. Transfer Commence Response
