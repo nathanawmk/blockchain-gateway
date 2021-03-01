@@ -52,10 +52,30 @@ The parameters of this message consists of the following:
 
 - client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
 
-- client_signature REQUIRED. The gateway signature (transmiting gateway).
+- client_signature REQUIRED. The gateway's signature (G1 as client)
 
 
-#### 7.2. Transfer Commence Message (Response)
+#### 7.2. Transfer Commence Acknowledge Message (Response)
+
+This message is sent from the server (recipient gateway) to client (sender gateway) in response to a Transfer Commence Request from the client.
+
+The message must be signed by the server (recipient gateway). 
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED urn:ietf:odap:msgtype:transfer-commenceresp
+
+- client_identity_pubkey REQUIRED. The gateway who sent this msg
+
+- server_identity_pubkey REQUIRED. The gateway for whom this is intended
+
+- hash_commence_request REQUIRED. The hash of previous request msg
+
+- server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+
+- server_signature REQUIRED. The gateway's signature (G2 as server)
+
+
 
 #### 7.3. Lock Evidence Message (Request)
 
