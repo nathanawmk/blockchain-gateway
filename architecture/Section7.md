@@ -41,13 +41,13 @@ The parameters of this message consists of the following:
 - recipient_dlt_system REQUIRED.	This is the identifier of the destination DLT system behind the server.
 
 - client_identity_pubkey REQUIRED. The gateway who sent this message.
--
+
 - server_identity_pubkey REQUIRED. The gateway for whom this message is intended.
 
 - hash_asset_profile REQUIRED.	This is the hash of the asset profile previously agreed upon.
 
 - asset_unit REQUIRED.	This is the unit amount of the asset being transferred, previously agreed upon.
--
+
 - hash_prev_message REQUIRED. The has of the last message in Phase 1.
 
 - client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
