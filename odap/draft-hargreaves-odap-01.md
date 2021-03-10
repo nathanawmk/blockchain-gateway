@@ -1,4 +1,6 @@
-# draft-hargreaves-odap-01
+# draft-hargreaves-odap-01 (November 2020)
+
+https://www.ietf.org/archive/id/draft-hargreaves-odap-01.txt
 
 ## Abstract
 
