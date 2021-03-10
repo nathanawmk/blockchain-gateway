@@ -368,6 +368,71 @@ As Gateways implement this functionality, they support the TRACKER application p
 This is an intentionally generalized extension mechanism for application or vendor specific functionality.
 
 
+### 5.9 Digital Asset Resource Discovery
+
+Applications MUST be able to discover which resources they are authorized to access to the level of individual DLTs.	They MAY be able to discover lower level resources.
+
+Resource discovery is handled by the DLT gateway, for instance a GET request against the gateway URL with no DLT or resource could return a list of URLs available to the requester to DLT level.	This list is subject to the access controls above.
+
+DLT Gateways MAY allow applications to discover resources they do not have access to, this should be indicated the free text field, and they should implement a process for applications to request access.
+  
+Formal specification of supported resource discovery methods is out of scope of this document.
+
+### 5.10 Accessing Resources via a DLT Gateway
+
+The Action field is used to access resources via the gateway.	We suggest these interactions use REST semantics however a detailed API specification is out of scope of this memo.
+
+In general, we suggest exposing a common subset of functionality via API using the Action field, augmented with DLT specific or smart contract specific functionality as needed.
+
+
+#### 5.10.1 CREATE
+
+Create an object on the target DLT.
+
+
+#### 5.10.2 WRITE
+
+Write to a location on the target DLT.
+
+#### 5.10.3. INVOKE
+
+Invoke code on the target DLT (typically a smart contract).
+
+#### 5.10.4.	LOCK
+
+Lock an object on the target DLT.
+
+#### 5.10.5.	UNLOCK
+
+Unlock an object on the target DLT.
+
+#### 5.10.6.	TRANSFER
+
+Transfer an object from one DLT to another.
+
+#### 5.10.7.	SUBSCRIBE
+
+Subscribe to be notified of transaction affecting an object on the target DLT.
+
+#### 5.10.8.	DESTROY
+
+Destroy an object on the target DLT.
+  
+#### 5.10.9.	READ
+
+Read an object from the target DLT.
+
+#### 5.10.10.	NATIVE_TXN
+
+Send a signed native transaction of any kind to the target DLT. Payload consists of the native transaction.
+
+
+
+
+
+####
+####
+####
 
 
 
