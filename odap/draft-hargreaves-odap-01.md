@@ -427,12 +427,16 @@ Read an object from the target DLT.
 Send a signed native transaction of any kind to the target DLT. Payload consists of the native transaction.
 
 
+### 5.11.	Response Codes
 
+The DLT Gateway MUST respond with return codes indicating the failure or success of the operation.	For DLTs with slow consensus mechanism, the Gateway may return codes indicating the operation has been submitted.	The application may carry out further operation in future to determine the ultimate status of the operation.
 
+For Non-native transactions, the Gateway is responsible for translating the request into the appropriate native format and ensuring correct signing takes place.
 
-####
-####
-####
+### 5.12.	Backward Compatibility
+
+It is also possible to send a fully formatted native message to the underlying DLT in the Payload field using the NATIVE_TXN operation, directed to a resource URL.	This allows existing DLT native code to be ported to ODAP infrastructures with minimal change.
+
 
 
 
@@ -514,3 +518,58 @@ The parameters of this message consists of the following:
 #### 7.3. Lock Evidence Message (Request)
 
 #### 7.4. Lock-evidence Receipt Message (Response)
+
+
+
+### 8.	Commitment Establishment Flow (Phase 3) 
+
+##### 8.1 Commit Preparation Message
+
+##### 8.2 Commit Preparation Response
+
+##### 8.3 Finalize Commitment Message
+
+##### 8.4 Finalize Commitment Response
+
+
+### 9.	Security Consideration
+
+Although the current interoperability architecture for blockchain gateways assumes the externalization of the value of assets, as a blockchain system holds an increasing number of virtual assets it becomes attractive to attackers seeking to obtain cryptographic keys of its nodes and its end-users.
+
+Gateway nodes are of particular interest to attackers because they enable the transferal of virtual assets to external blockchain systems, which may or may not be regulated.	As such, hardening technologies and tamper-resistant crypto-processors (e.g.	TPM, SGX) should be used for implementations of gateways [HS19].
+
+Due to the consensus-based nature of the underlying DLT technologies, gateway responses may be conditional and require verification, for instance if the DLT is undergoing a byzantine attack at the time of the request.
+
+The application must evaluate the correctness of responses from the gateway in context and may need to perform further verification steps with later ODAP calls.	The application may base this evaluation on the number of DLT nodes the gateway has interacted with in order to fulfil the request.
+
+
+
+### 10.	IANA Consideration (TBD)
+
+
+### 11.	References
+
+##### 11.1.	Normative References
+  
+[RFC2119]	Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119,
+DOI 10.17487/RFC2119, March 1997,
+<https://www.rfc-editor.org/info/rfc2119>.
+
+[RFC2234]	Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax Specifications: ABNF", RFC 2234, DOI 10.17487/RFC2234,
+November 1997, <https://www.rfc-editor.org/info/rfc2234>.
+
+[RFC7519]	Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
+<https://www.rfc-editor.org/info/rfc7519>.
+
+#### 11.2.	Informative References
+
+[Arch]	Hardjono, T., Hargreaves, M., and N. Smith, "An Interoperability Architecture for Blockchain Gateways. draft-hardjono-blockchain-interop-arch-01", October 2020,
+<https://www.ietf.org/archive/id/draft-hardjono- blockchain-interop-arch-01.txt>.
+
+[HS2019]	Hardjono, T. and N. Smith, "Decentralized Trusted Computing Base for Blockchain Infrastructure Security, Frontiers Journal, Sepcial Issue on Blockchain Technology, Vol. 2, No. 24", December 2019,
+<https://doi.org/10.3389/fbloc.2019.00024>.
+
+[NIST]	Yaga, D., Mell, P., Roby, N., and K. Scarfone, "NIST Blockchain Technology Overview (NISTR-8202)", October 2018, <https://doi.org/10.6028/NIST.IR.8202>.
+
+[RFC5939]	Andreasen, F., "Session Description Protocol (SDP) Capability Negotiation", RFC 5939, DOI 10.17487/RFC5939, September 2010, <https://www.rfc-editor.org/info/rfc5939>.
+
