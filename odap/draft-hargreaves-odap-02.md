@@ -142,11 +142,11 @@ These flow will be discussed below.
 
 - Resource discovery mechanism for developers and applications to discover DLT-based resources hosted at a DLT gateway.	The gateway response is subject to the level of access granted to that developer or application.
 
-## 4.6.	Access Modes
+### 4.6.	Access Modes
 
 This draft proposes three (3) distinct mode of operation for Clients when accessing resources recorded a DLT.	These modes make use of a gateway, with the assumption that a gateway has full access to the DLT behind the gateway.
 
-### 4.6.1.	Direct Mode: Simple Client to Gateway
+#### 4.6.1.	Direct Mode: Simple Client to Gateway
 
 In this mode, the client uses its local gateway known to the client in order to access (e.g. local transactions to) the local DLT.	This is shown in Figure 2.
 
@@ -156,7 +156,7 @@ The application must be recognized and authorized by the gateway. Asset transfer
 
 Additional operations specific to DLT or Gateway implementations MAY also be available.
 
-### 4.6.2.	Direct Mode: Client to Multiple Gateway
+#### 4.6.2.	Direct Mode: Client to Multiple Gateway
 
 In this mode, the client is interacting with multiple gateways simultaneously in order to access the DLTs behind each of those gateways.	The client is assumed to be performing the synchronization of actions while interacting these gateways.	This is illustrated in Figure 3.
 
@@ -166,7 +166,7 @@ The applications can interact with the DLTs behind each gateway according to the
 
 Asset transfers between/across DLTs hosted behind different gateways are not supported in this mode.
 
-### 4.6.3.	Relay Mode: Client-initiated Gateway to Gateway
+#### 4.6.3.	Relay Mode: Client-initiated Gateway to Gateway
 
 In this mode, the application interacts with a single Gateway, and that Gateway acts as an intermediary to other Gateways.
 
