@@ -1,5 +1,45 @@
 # draft-hargreaves-odap-02
 
+## Abstract
+
+   This memo describes the Open Digital Asset Protocol (ODAP).  ODAP is
+   an asset transfer protocol that operates between two gateway devices.
+   The protocol includes a description of virtual or digital assets held
+   on distributed ledgers in an open and interoperable format, a session
+   negotiation part and message passing flows between gateways
+   connecting disparate distributed ledger technologies (DLTs).
+
+## Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on May 5, 2021.
+
+## Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+
+
 ## 1. Introduction
 
 There is a lack of interoperability between individual blockchains, but also a general difficulty building open DLT networks.	Extant networks are custom built and relatively closed, usually limited to networks of a single DLT type.
