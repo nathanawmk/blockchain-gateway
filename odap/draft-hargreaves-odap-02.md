@@ -218,6 +218,105 @@ JSON format message, mandatory fields are shown below:
 - Sequence Number: Sequence Number.
 
 
+### 5.3.	Digital Asset Resource Descriptors
+
+Resources are identified by URL [RFC 1738] as described below:
+- The type is new: application/odapres
+- The access protocol is ODAP.
+
+Data included in the URL includes the following:
+
+#### 5.3.1.	Organisation Identifier
+
+This Legal Entity Identifier (LEI) or other identifier linking resource ownership to real world entity.	Any scheme for identifying DLT Gateway owners may be implemented (e.g.	LEI directory, closed user group membership, SWIFT BIC, etc.).
+
+The developer or application MAY validate the identity with the issuing authority.	The identifier is not a trusted identity, but MAY be relied on where trust has been established between the two parties (e.g. in a closed user group).
+
+The mechanisms to determine organizations identifiers is out of scope for the current specification.
+
+#### 5.3.2.	DLT Gateway / Endpoint ID
+
+FQDN of the ODAP compliant DLT gateway.	Required to establish IP connectivity.	This MUST resolve to a valid IP address.
+
+#### 5.3.3.	DLT Identifier
+
+Specify to gateway behind which the target DLTs operates.	This field is local to the DLT gateway and is used to direct ODAP interactions to the correct underlying DLT.
+
+For example: "Hyperledger1", "Bitcoin, "EU-supply-chain".
+
+#### 5.3.4.	Resource
+
+Specifies a resource held on the underlying DLT.	This field must be meaningful to the DLT in question but is otherwise an arbitrary string.	The underlying object it points to may be a DLT address, block, transaction ID, alias, etc. or a future object type not yet defined.
+  
+#### 5.3.5.	Examples 
+
+odapres://quant/api.gateway1.com/ripple
+
+odapres://quant/api.gateway1.com/bitcoin/xxxxxADDRESSxxxxx
+
+
+
+### 5.4.	Digital Asset Resource Client Descriptors 
+
+Resources are identified by URN as described below:
+ - The type is new: application/odapclient
+ - 
+The URN format does not imply availability or access protocol. 
+
+Data included in the URN includes the following:
+
+##### 5.4.1 Organization Identifier
+
+Legal Entity Identifier (LEI) or other identifier linking resource ownership to real world entity.	Any scheme for identifying DLT Gateway owners may be implemented (e.g.	LEI directory, closed user group membership, BIC, etc.).
+
+The DLT Gateway MAY validate the identity with the issuing authority. The identifier is not a trusted identity, but MAY be relied on where trust has been established between the two parties (e.g. in a closed user group).
+
+
+##### 5.4.2.	DLT Gateway / Endpoint ID
+Multi-DLT applications can operate in a mode whereby the application connects to its local DLT gateway, which then forwards application traffic to local DLTs and to remote DLTs via other ODAP gateways.
+
+Where this is the case, this field identifies the "home" gateway for this application.	This may be required to carry out Gateway to Gateway handshaking and protocol negotiation, or for the server to look up use case specific data relating to the client.
+
+
+##### 5.4.3.	Organizational Unit
+The organization unit within the organization that the client (application or developer) belongs to.	This assertion should be backed up with authentication via the negotiated protocol.
+
+The purpose of this field is to allow DLT gateways to maintain access control mapping between applications and resources that are independent of the authentication and authorization schemes used,
+  
+supporting future changes and supporting counterparties that operate different schemes.
+
+
+##### 5.4.4.	Name
+A locally unique (within the OU) identifier, which can identify the application, project or individual developer responsible for this client connection.	This is the most granular unit of access control, and DLT Gateways should ensure appropriate identifiers are used for the needs of the application or use case.
+
+
+##### 5.4.5.	Examples 
+
+odapclient:quant/api.overledger.quant.com/research/luke.riley
+
+
+#### 5.5.	Gateway Level Access Control
+
+Gateways can enforce access rules based on standard naming conventions using novel or existing mechanisms such as AuthZ protocols using the resource identifiers above, for example:
+
+ - odapclient://hsbc/api.overledger.hsbc.com/lending/eric.devloper 
+can READ/WRITE
+ - odapres://quant/api.gateway1.com/bitcoin
+AND
+ - odapres://quant/api.gateway1.com/ripple
+
+These rules would allow a client so identified to access resources directly, for example:
+
+ - odapres://quant/api.gateway1.com/bitcoin/xxxxxADDRESSxxxxx
+
+This example could be an client subscribing to or writing to an address associated with a smart contract as part of its functionality.
+
+This method allows resource owners to easily grant access to individuals, groups and organizations.	Individual gateway implementations may implement access controls, including subsetting and supersetting or applications or resources according to their own requirements.
+
+
+
+
+####
 
 
 
