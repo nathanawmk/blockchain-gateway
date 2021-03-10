@@ -38,6 +38,8 @@
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
 
 
 ## 1. Introduction
@@ -140,10 +142,84 @@ These flow will be discussed below.
 
 - Resource discovery mechanism for developers and applications to discover DLT-based resources hosted at a DLT gateway.	The gateway response is subject to the level of access granted to that developer or application.
 
+## 4.6.	Access Modes
+
+This draft proposes three (3) distinct mode of operation for Clients when accessing resources recorded a DLT.	These modes make use of a gateway, with the assumption that a gateway has full access to the DLT behind the gateway.
+
+### 4.6.1.	Direct Mode: Simple Client to Gateway
+
+In this mode, the client uses its local gateway known to the client in order to access (e.g. local transactions to) the local DLT.	This is shown in Figure 2.
+
+In the direct mode, the simplest case, a client application interacts with a single DLT gateway in order to interact with the DLTs hosted behind the gateway.
+  
+The application must be recognized and authorized by the gateway. Asset transfers between the DLTs behind the gateway are possible, and the set of operations specified in section 5.10 MUST be supported by the DLT Gateway.
+
+Additional operations specific to DLT or Gateway implementations MAY also be available.
+
+### 4.6.2.	Direct Mode: Client to Multiple Gateway
+
+In this mode, the client is interacting with multiple gateways simultaneously in order to access the DLTs behind each of those gateways.	The client is assumed to be performing the synchronization of actions while interacting these gateways.	This is illustrated in Figure 3.
+
+Direct mode can support connections from a single application to multiple DLT gateways.	The applications may assert different identities with each gateway, provided it has the relevant credentials.
+
+The applications can interact with the DLTs behind each gateway according to the authorizations granted by the gateways.
+
+Asset transfers between/across DLTs hosted behind different gateways are not supported in this mode.
+
+### 4.6.3.	Relay Mode: Client-initiated Gateway to Gateway
+
+In this mode, the application interacts with a single Gateway, and that Gateway acts as an intermediary to other Gateways.
+
+Connection types and security methods used in the application to gateway connection can differ from those used in the gateway to gateway connection(s).	The authorization method and credentials presented on behalf of the application must be acceptable to the final target gateway(s).
+
+In Relay Mode, additional functionality is available.	Asset transfers, based on a two/three phase commit are available.	These rely on evidence of locks on source DLTs, which can be passed from Gateway to Gateway, insulating the application from the additional complexity and keeping the lock data private from the application.
+
+Compliant Gateways MUST implement these operations, in order to support Relay Mode.
+
+Multi-hop connections between gateways are out of scope of this document.
+
 
 
 
 ## 5. ODAP Message Format, Identifiers and Descriptors
+
+## 5.1.	Overview
+
+This section describes (i) the phases of the ODAP protocol; (ii) the format of ODAP messages; (iii) the format for resource descriptors;
+(iv) a method for gateways to implement access controls; (iv) protocol for negotiating security capabilities; (v) discovery and accessing resources and provisions for backward compatibility with existing systems.
+
+
+## 5.2.	ODAP Message Format
+
+ODAP messages are exchanged between applications (clients) and DLT gateways (servers).	They consist of protocol negotiation and functional messages.
+
+Messages are JSON format, with protocol specific mandatory fields, support for arbitrary authentication and authorization schemes and support for a free format field for plaintext or encrypted payloads directed at the DLT gateway or an underlying DLT.
+
+JSON format message, mandatory fields are shown below: 
+
+- Version: ODAP protocol Version (major, minor).
+
+- Resource URL: Location of Resource to be accessed.
+
+- Developer URN: Assertion of developer / application identity.
+
+- Action/Response: GET/POST and arguments (or Response Code)
+
+- Credential Profile: Specify type of auth (e.g.	SAML, OAuth, X.509)
+
+- Credential Block: Credential token, certificate, string
+
+- Payload Profile: Asset Profile provenance and capabilities
+
+- Application Profile: Vendor or Application specific profile
+
+- Payload: Payload for POST, responses, and native DLT txns
+
+- Sequence Number: Sequence Number.
+
+
+
+
 
 
 ## 6. Transfer Initiation Flow (Phase 1) 
