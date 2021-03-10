@@ -25,25 +25,25 @@ In this document, these words will appear with that interpretation only when in 
 
 The following are some terminology used in the current document. Further terminology can be found in [Arch].
 
-Client application: This is the application employed by a user to interact with a gateway node.
+- Client application: This is the application employed by a user to interact with a gateway node.
 
-Gateway: The node of the DLT system functionally capable of acting as a gateway in an asset transfer.
+- Gateway: The node of the DLT system functionally capable of acting as a gateway in an asset transfer.
 
-Sender gateway: The gateway that initiates a unidirectional asset transfer.
+- Sender gateway: The gateway that initiates a unidirectional asset transfer.
 
-Recipient gateway: The gateway that is the recipient side of a unidirectional asset transfer.
+- Recipient gateway: The gateway that is the recipient side of a unidirectional asset transfer.
 
-DLT resources: The various interior protocols, data structures and cryptographic constructs that are a core part of a DLT system.
+- DLT resources: The various interior protocols, data structures and cryptographic constructs that are a core part of a DLT system.
 
-Off-DLT resources: The various resources that are outside a DLT system, and are not part of the operations of the DLT system.
+- Off-DLT resources: The various resources that are outside a DLT system, and are not part of the operations of the DLT system.
 
-Role: As in the classic client-server roles.	In the gateway-to- gateway interaction, one gateway will take the role of the client while the other takes the role of the server, depending on the type of interaction flow.
+- Role: As in the classic client-server roles.	In the gateway-to- gateway interaction, one gateway will take the role of the client while the other takes the role of the server, depending on the type of interaction flow.
 
-Claim: An assertion made by an Entity [JWT].
+- Claim: An assertion made by an Entity [JWT].
 
-Claim Type: Syntax used for representing a Claim Value [JWT].
+- Claim Type: Syntax used for representing a Claim Value [JWT].
 
-DLT Claim: An assertion made by a Gateway regarding the status or condition of resources (e.g. asset, public keys, etc.) accessible to that gateway within its DLT system.
+- DLT Claim: An assertion made by a Gateway regarding the status or condition of resources (e.g. asset, public keys, etc.) accessible to that gateway within its DLT system.
 
 
 ## 4. Open Digital Asset Protocol
@@ -68,11 +68,11 @@ Gateways interact with each other over a gateway interface (API Type- 2).	A give
 
 The following are the types of APIs in ODAP:
 
-o	Gateway APIs for client (API Type-1): This the REST APIs that permit a Client (application) to interact with a local gateway, and issue instructions for actions pertaining to resources accessible to the gateway in the local DLT system.
+- Gateway APIs for client (API Type-1): This the REST APIs that permit a Client (application) to interact with a local gateway, and issue instructions for actions pertaining to resources accessible to the gateway in the local DLT system.
 
-o	Gateway APIs for peer gateways (API Type-2): This is the REST APIs employed by two (2) peer gateways in performing unidirectional asset transfers.
+- Gateway APIs for peer gateways (API Type-2): This is the REST APIs employed by two (2) peer gateways in performing unidirectional asset transfers.
 
-o	APIs for validation of off-DLT resources (API Type-3): This is the REST APIs made available by a resource server (resource owner) at which a gateway can access Off-DLT resources.
+- APIs for validation of off-DLT resources (API Type-3): This is the REST APIs made available by a resource server (resource owner) at which a gateway can access Off-DLT resources.
 
 The use of these APIs is dependent on the mode of access and the type of flow in question.
 
@@ -81,24 +81,24 @@ The use of these APIs is dependent on the mode of access and the type of flow in
 
 The ODAP protocol defines the following three (3) flows:
 
-o	Transfer Initiation flow: This set of flow deals with the asset profile verification, asset ownership evidence verification and identities verification.
+- Transfer Initiation flow: This set of flow deals with the asset profile verification, asset ownership evidence verification and identities verification.
 
-o	Lock-Evidence Verification flow: This set of flow deals with the conveyance of evidence regarding the lock (escrow) status of an asset by one gateway, and the verification of the evidence by the other gateway.
+- Lock-Evidence Verification flow: This set of flow deals with the conveyance of evidence regarding the lock (escrow) status of an asset by one gateway, and the verification of the evidence by the other gateway.
 
-o	Commitment Establishment flow: This set of flow deals with the asset transfer and commitment establishment between two gateways on behalf of their DLT systems.
+- Commitment Establishment flow: This set of flow deals with the asset transfer and commitment establishment between two gateways on behalf of their DLT systems.
 
 These flow will be discussed below.
 
 
 ### 4.5.	Resources and Identifiers
 
-o Resource addressing for DLTs, using the URL syntax.
+- Resource addressing for DLTs, using the URL syntax.
 
-o	 Client identification based on the URN format.	These are for identifying clients (developers and applications) who access these resources, and which in some use-cases require access authorization.
+- Client identification based on the URN format.	These are for identifying clients (developers and applications) who access these resources, and which in some use-cases require access authorization.
   
-o Protocol message family for negotiating authentication, authorisation, and parameters for confidential channel establishment.
+- Protocol message family for negotiating authentication, authorisation, and parameters for confidential channel establishment.
 
-o Resource discovery mechanism for developers and applications to discover DLT-based resources hosted at a DLT gateway.	The gateway response is subject to the level of access granted to that developer or application.
+- Resource discovery mechanism for developers and applications to discover DLT-based resources hosted at a DLT gateway.	The gateway response is subject to the level of access granted to that developer or application.
 
 
 
