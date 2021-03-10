@@ -23,9 +23,39 @@ In this document, these words will appear with that interpretation only when in 
 
 ## 3. Terminology
 
+The following are some terminology used in the current document. Further terminology can be found in [Arch].
+
+Client application: This is the application employed by a user to interact with a gateway node.
+
+Gateway: The node of the DLT system functionally capable of acting as a gateway in an asset transfer.
+
+Sender gateway: The gateway that initiates a unidirectional asset transfer.
+
+Recipient gateway: The gateway that is the recipient side of a unidirectional asset transfer.
+
+DLT resources: The various interior protocols, data structures and cryptographic constructs that are a core part of a DLT system.
+
+Off-DLT resources: The various resources that are outside a DLT system, and are not part of the operations of the DLT system.
+
+Role: As in the classic client-server roles.	In the gateway-to- gateway interaction, one gateway will take the role of the client while the other takes the role of the server, depending on the type of interaction flow.
+
+Claim: An assertion made by an Entity [JWT].
+
+Claim Type: Syntax used for representing a Claim Value [JWT].
+
+DLT Claim: An assertion made by a Gateway regarding the status or condition of resources (e.g. asset, public keys, etc.) accessible to that gateway within its DLT system.
+
+
 ## 4. Open Digital Asset Protocol
 
-## 5. ODAP Message Format, identifiers and Descriptors
+### 4.1.	Overview
+
+The Open Digital Asset Protocol (ODAP) is a gateway-to-gateway protocol used by a sender gateway with a recipient gateway to perform a unidirectional transfer of a virtual asset [Arch].
+
+The protocol defines a number of API endpoints, resources and identifier definitions, and message flows corresponding to the asset transfer between the two gateways.
+
+
+## 5. ODAP Message Format, Identifiers and Descriptors
 
 
 ## 6. Transfer Initiation Flow (Phase 1) 
