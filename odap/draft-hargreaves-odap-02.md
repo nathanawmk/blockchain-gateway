@@ -55,6 +55,54 @@ The Open Digital Asset Protocol (ODAP) is a gateway-to-gateway protocol used by 
 The protocol defines a number of API endpoints, resources and identifier definitions, and message flows corresponding to the asset transfer between the two gateways.
 
 
+### 4.2.	ODAP Model
+
+Following the gateway interoperability architecture [Arch], the model for ODAP is shown in Figure 1.
+
+The Client (application) interacts with its local gateway (G1) over an interface (API Type-1) in order to provide instructions to the gateway with regards to actions related resources located in the local DLT system (L1) and resources located in remote DLT system (L2).
+
+Gateways interact with each other over a gateway interface (API Type- 2).	A given gateway may be required to access resources that are not located in DLT system L1 or DLT system L2.	Access to these types of resources are performed over an Off-DLT interface (API Type-3).
+
+
+### 4.3.	Types of APIs
+
+The following are the types of APIs in ODAP:
+
+o	Gateway APIs for client (API Type-1): This the REST APIs that permit a Client (application) to interact with a local gateway, and issue instructions for actions pertaining to resources accessible to the gateway in the local DLT system.
+
+o	Gateway APIs for peer gateways (API Type-2): This is the REST APIs employed by two (2) peer gateways in performing unidirectional asset transfers.
+
+o	APIs for validation of off-DLT resources (API Type-3): This is the REST APIs made available by a resource server (resource owner) at which a gateway can access Off-DLT resources.
+
+The use of these APIs is dependent on the mode of access and the type of flow in question.
+
+
+### 4.4.	Types of Flows
+
+The ODAP protocol defines the following three (3) flows:
+
+o	Transfer Initiation flow: This set of flow deals with the asset profile verification, asset ownership evidence verification and identities verification.
+
+o	Lock-Evidence Verification flow: This set of flow deals with the conveyance of evidence regarding the lock (escrow) status of an asset by one gateway, and the verification of the evidence by the other gateway.
+
+o	Commitment Establishment flow: This set of flow deals with the asset transfer and commitment establishment between two gateways on behalf of their DLT systems.
+
+These flow will be discussed below.
+
+
+### 4.5.	Resources and Identifiers
+
+o Resource addressing for DLTs, using the URL syntax.
+
+o	 Client identification based on the URN format.	These are for identifying clients (developers and applications) who access these resources, and which in some use-cases require access authorization.
+  
+o Protocol message family for negotiating authentication, authorisation, and parameters for confidential channel establishment.
+
+o Resource discovery mechanism for developers and applications to discover DLT-based resources hosted at a DLT gateway.	The gateway response is subject to the level of access granted to that developer or application.
+
+
+
+
 ## 5. ODAP Message Format, Identifiers and Descriptors
 
 
