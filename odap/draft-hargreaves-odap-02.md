@@ -260,7 +260,7 @@ odapres://quant/api.gateway1.com/bitcoin/xxxxxADDRESSxxxxx
 
 Resources are identified by URN as described below:
  - The type is new: application/odapclient
- - 
+
 The URN format does not imply availability or access protocol. 
 
 Data included in the URN includes the following:
@@ -316,7 +316,40 @@ This method allows resource owners to easily grant access to individuals, groups
 
 
 
-####
+#### 5.6.	Negotiation of Security Protocols and Parameters
+
+##### 5.6.1.	TLS Established
+
+TLS 1.2 or higher MUST be implemented to protect gateway communications.	TLS 1.3 or higher SHOULD be implemented where both gateways support TLS 1.3 or higher.
+
+
+##### 5.6.2.	Client offers supported credential schemes
+
+Capability negotiation prior to data exchange, follows a scheme similar to the Session Description Protocol [RFC 5939].	Initially the client (application) sends a JSON block containing acceptable credential schemes, e.g.	OAuth2.0, SAML in the "Credential Scheme" field of the ODAP message.
+
+#### 5.6.3.	Server selects supported credential scheme
+
+The server (DLT Gateway) selects one acceptable credential scheme from the offered schemes, returning the selection in the "Credential Scheme" field of the ODAP message.
+
+If no acceptable credential scheme was offered, an HTPP 511 "Network Authentication Required" error is returned in the Action/Response field of the ODAP message.
+
+#### 5.6.4.	Client asserts of proves identity
+
+The details of the assertion / verification step are specific to the chosen credential scheme and are out of scope of this document.
+
+
+#### 5.6.5.	Sequence numbers initialized
+
+Sequence numbers are used to allow the server to correctly order operations from the client, some of which may be asynchronous, synchronous, idempotent with duplicate requests handled in different ways according to the use case.
+
+The initial sequence number is proposed by the client (Application) after the finalization of credential verification.	The server (DLT gateway) MUST respond with the same sequence number to indicate acceptance.
+
+The client (application) increments the sequence number with each new request.	Sequence numbers can be reused for retries in the event of a gateway timeout.
+
+#### 5.6.6.	Messages can now be exchanged
+
+Handshaking is complete at this point, and the client (application) can send ODAP messages to perform actions of DLT resources, which MAY reference the ODAP Payload field.
+
 
 
 
