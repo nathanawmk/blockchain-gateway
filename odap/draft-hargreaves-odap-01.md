@@ -351,12 +351,28 @@ The client (application) increments the sequence number with each new request.	S
 Handshaking is complete at this point, and the client (application) can send ODAP messages to perform actions of DLT resources, which MAY reference the ODAP Payload field.
 
 
+### 5.7.	Asset Profile Negotiation
+TBD
+
+### 5.8.	Application Profile Negotiation
+Where an application relies on specific extensions for operation, these can be represented in an Application Profile.
+
+For example, a payments application tracks payments through the use of a cloud based API and will only interact with Gateways that log messages to that API, a resource profile can be established:
+
+- Application Name: TRACKER
+- X-Tracker_URL: https://api.tracker.com/updates 
+- X-Tracking-Policy: Always
+
+As Gateways implement this functionality, they support the TRACKER application profile, and the application is able to expand its reach by periodically polling for the availability of the profile.
+
+This is an intentionally generalized extension mechanism for application or vendor specific functionality.
+
+
 
 
 
 ## 6. Transfer Initiation Flow (Phase 1) 
 TBD
-
 
 
 ## 7. Lock-Evidence Verification Flow (Phase 2)
