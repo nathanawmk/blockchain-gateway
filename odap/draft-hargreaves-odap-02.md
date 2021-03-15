@@ -441,11 +441,11 @@ It is also possible to send a fully formatted native message to the underlying D
 
 
 
-## 6. Transfer Initiation Flow (Phase 1) 
+## 6. Transfer Initiation Flows (Phase 1) 
 TBD
 
 
-## 7. Lock-Evidence Verification Flow (Phase 2)
+## 7. Lock-Evidence Verification Flows (Phase 2)
 
 This section describes the conveyance of claims regarding to the status of assets or resources from a sender gateway to a recipient gateway.
 
@@ -574,7 +574,7 @@ The parameters of this message consists of the following:
 
 
 
-### 8.	Commitment Establishment Flow (Phase 3) 
+### 8.	Commitment Establishment Flows (Phase 3) 
 
 This section describes the transfer commitment agreement between the sender gateway to a recipient gateway.
 
@@ -624,7 +624,7 @@ The message must be signed by the server.
 
 The parameters of this message consists of the following:
 
-- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-prepareack-msg
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-prepare-ack-msg
 
 - client_identity_pubkey REQUIRED. The client for whom this message is intended.
 
@@ -637,7 +637,7 @@ The parameters of this message consists of the following:
 - server_signature REQUIRED. The digital signature of the server.
 
 
-##### 8.3 Finalize Commitment Message
+##### 8.3 Commit Final Message
 
 The purpose of this message is for the client to indicate to the server that the client (sender gateway) has completed local extinguishment of the asset on its DLT (L1), and that now on its part the server (recipient gateway) must re-generated the asset on its DLT (L2).	
 
@@ -662,7 +662,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-##### 8.4 Finalize Commitment Response
+##### 8.4 Commit Final Response Message
 
 The purpose of this message is for the server to indicate to the client that it has completed the asset re-generation at its DLTS (L2).
 
@@ -670,7 +670,7 @@ The message must contain claims related to the re-generated of the asset by the 
 
 The parameters of this message consists of the following:
 
-- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-finalack-msg
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-final-ack-msg
 
 - client_identity_pubkey REQUIRED. The client for whom this message is intended.
 
