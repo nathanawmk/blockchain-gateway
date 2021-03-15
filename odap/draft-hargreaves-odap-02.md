@@ -463,7 +463,7 @@ The client and server may be required to sign certain messages in order to provi
 
 (NOTE: Flows occur over TLS. Nonces are not shown).
 
-#### 7.1. Transfer Commence Message (Request)
+### 7.1. Transfer Commence Message (Request)
 
 This message is sent from the client (sender gateway) to the server (recipient gateway).	
 
@@ -498,7 +498,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-#### 7.2. Transfer Commence Acknowledge Message (Response)
+### 7.2. Transfer Commence Acknowledge Message (Response)
 
 The purpose of this message is for the server to indicate agreement to proceed with the asset transfer.
 
@@ -522,7 +522,7 @@ The parameters of this message consists of the following:
 
 
 
-#### 7.3. Lock Evidence Message (Request)
+### 7.3. Lock Evidence Message (Request)
 
 The purpose of this message is for the client (sending gateway) to deliver the relevant asset-lock (or escrow) evidence to the server (recipient gateway). 
 
@@ -551,7 +551,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-#### 7.4. Lock-evidence Receipt Message (Response)
+### 7.4. Lock-evidence Receipt Message (Response)
 
 The purpose of this message is for the server (recipient gateway) to indicate accaptance of the asset-lock (or escrow) evidence delivered by the client (sending gateway) in the previous message.
 
@@ -574,7 +574,7 @@ The parameters of this message consists of the following:
 
 
 
-### 8.	Commitment Establishment Flows (Phase 3) 
+## 8.	Commitment Establishment Flows (Phase 3) 
 
 This section describes the transfer commitment agreement between the sender gateway to a recipient gateway.
 
@@ -595,7 +595,7 @@ The client and server may be required to sign certain messages in order to provi
 (NOTE: Flows occur over TLS. Nonces are not shown).
 
 
-##### 8.1 Commit Preparation Message
+### 8.1 Commit Preparation Message
 
 The purpose of this message is for the client to indicate its readiness to begin the commitment of the transfer.
 
@@ -616,7 +616,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-##### 8.2 Commit Preparation Response
+### 8.2 Commit Preparation Response
 
 The purpose of this message is for the server to indicate to the client its readiness to proceed with the commitment finalization step.
 
@@ -637,7 +637,7 @@ The parameters of this message consists of the following:
 - server_signature REQUIRED. The digital signature of the server.
 
 
-##### 8.3 Commit Final Message
+### 8.3 Commit Final Message
 
 The purpose of this message is for the client to indicate to the server that the client (sender gateway) has completed local extinguishment of the asset on its DLT (L1), and that now on its part the server (recipient gateway) must re-generated the asset on its DLT (L2).	
 
@@ -662,7 +662,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-##### 8.4 Commit Final Response Message
+### 8.4 Commit Final Response Message
 
 The purpose of this message is for the server to indicate to the client that it has completed the asset re-generation at its DLTS (L2).
 
@@ -687,7 +687,7 @@ The parameters of this message consists of the following:
 - server_signature REQUIRED. The digital signature of the server.
 
 
-##### 8.5 Transfer Complete Message
+### 8.5 Transfer Complete Message
 
 The purpose of this message is for the client to indicate to the server that the asset transer has been completed and that no further messages are to be expected from the client in regards to this transfer instance. 
 
@@ -711,7 +711,7 @@ The parameters of this message consists of the following:
 
 
 
-### 9.	Security Consideration
+## 9.	Security Consideration
 
 Although the current interoperability architecture for blockchain gateways assumes the externalization of the value of assets, as a blockchain system holds an increasing number of virtual assets it becomes attractive to attackers seeking to obtain cryptographic keys of its nodes and its end-users.
 
@@ -723,12 +723,12 @@ The application must evaluate the correctness of responses from the gateway in c
 
 
 
-### 10.	IANA Consideration (TBD)
+## 10.	IANA Consideration (TBD)
 
 
-### 11.	References
+## 11.	References
 
-##### 11.1.	Normative References
+### 11.1.	Normative References
   
 [RFC2119]	Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119,
 DOI 10.17487/RFC2119, March 1997,
@@ -740,7 +740,7 @@ November 1997, <https://www.rfc-editor.org/info/rfc2234>.
 [RFC7519]	Jones, M., Bradley, J., and N. Sakimura, "JSON Web Token (JWT)", RFC 7519, DOI 10.17487/RFC7519, May 2015,
 <https://www.rfc-editor.org/info/rfc7519>.
 
-#### 11.2.	Informative References
+### 11.2.	Informative References
 
 [Arch]	Hardjono, T., Hargreaves, M., and N. Smith, "An Interoperability Architecture for Blockchain Gateways. draft-hardjono-blockchain-interop-arch-01", October 2020,
 <https://www.ietf.org/archive/id/draft-hardjono- blockchain-interop-arch-01.txt>.
