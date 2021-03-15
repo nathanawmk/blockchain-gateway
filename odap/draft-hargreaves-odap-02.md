@@ -689,7 +689,7 @@ The parameters of this message consists of the following:
 
 ##### 8.5 Transfer Complete Message
 
-The purpose of this message is for the client to indicate to the server that the asset transer has been completed and that no further messages are to be expected by the server in regards to this transfer. 
+The purpose of this message is for the client to indicate to the server that the asset transer has been completed and that no further messages are to be expected from the client in regards to this transfer instance. 
 
 The message closes the first message of Phase 2 (Transfer Commence Message) . It must be signed by the client.
 
@@ -701,7 +701,7 @@ The parameters of this message consists of the following:
 
 - server_identity_pubkey REQUIRED. The server for whom this message is intended.
 
-- hash_commit-final_ack REQUIRED. The hash of previous message.
+- hash_commit_final_ack REQUIRED. The hash of previous message.
 
 - hash_transfer_commence REQUIRED. The hash of the Transfer Commence message at the start of Phase 2 (see section 7.1).
 
