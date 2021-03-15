@@ -455,7 +455,7 @@ In the following, the sender gateway takes the role of the client while the reci
 
 The flow follows a request-response model. The client makes a request (POST) to the Lock-Evidence Agreement endpoint at the server.
 
-Gateways as servers MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] these endpoints.
+Gateways MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] for the endpoint.
   
 Clients MAY use the HTTP GET or POST methods to send messages in this phase to the server. If using the HTTP GET method, the request parameters maybe serialized using URI Query String Serialization.
 
@@ -465,11 +465,11 @@ The client and server may be required to sign certain messages in order to provi
 
 #### 7.1. Transfer Commence Message (Request)
 
-This message is sent from the client (sender gateway) to the Transfer Request Endpoint at the server.	
+This message is sent from the client (sender gateway) to the server (recipient gateway).	
 
 The purpose of this message is to indicate to the server that the client has accepted the parameters agrees upon in Phase 1 and that the client ready to start the transfer of the digital asset.
 
-The message must contain claims related to the information from the previous flow (Phase 1).	It must be signed by the client (sender gateway).
+It must be signed by the client.
 
 The parameters of this message consists of the following:
 
@@ -483,48 +483,50 @@ The parameters of this message consists of the following:
 
 - recipient_dlt_system REQUIRED.	This is the identifier of the destination DLT system behind the server.
 
-- client_identity_pubkey REQUIRED. The gateway who sent this message.
+- client_identity_pubkey REQUIRED. The client who sent this message.
 
-- server_identity_pubkey REQUIRED. The gateway for whom this message is intended.
+- server_identity_pubkey REQUIRED. The server for whom this message is intended.
 
-- hash_asset_profile REQUIRED.	This is the hash of the asset profile previously agreed upon.
+- hash_asset_profile REQUIRED.	This is the hash of the asset profile previously agreed upon in Phase 1.
 
-- asset_unit REQUIRED.	This is the unit amount of the asset being transferred, previously agreed upon.
+- asset_unit OPTIONAL.	If applicable this is the unit amount of the asset being transferred, previously agreed upon.
 
 - hash_prev_message REQUIRED. The has of the last message in Phase 1.
 
 - client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
 
-- client_signature REQUIRED. The digital signature of the client (gateway G1 as client).
+- client_signature REQUIRED. The digital signature of the client.
 
 
 #### 7.2. Transfer Commence Acknowledge Message (Response)
 
-The purpose of this message is for the server to indicate agreement of the server to proceed with the asset transfer.
+The purpose of this message is for the server to indicate agreement to proceed with the asset transfer.
 
 This message is sent from the server (recipient gateway) to client (sender gateway) in response to a Transfer Commence Request from the client.
 
-The message must be signed by the server (recipient gateway). 
+The message must be signed by the server. 
 
 The parameters of this message consists of the following:
 
-- message_type REQUIRED urn:ietf:odap:msgtype:transfer-commenceresp-msg
+- message_type REQUIRED urn:ietf:odap:msgtype:transfer-commenceack-msg
 
-- client_identity_pubkey REQUIRED. The gateway who sent this msg
+- client_identity_pubkey REQUIRED. The client for whom this message is intended.
 
-- server_identity_pubkey REQUIRED. The gateway for whom this is intended
+- server_identity_pubkey REQUIRED. The server who sent this message.
 
 - hash_commence_request REQUIRED. The hash of previous message.
 
-- server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+- server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the server.	This number is meaningful only to the server.
 
-- server_signature REQUIRED. The digital signature of the server (gateway G2 as server).
+- server_signature REQUIRED. The digital signature of the server.
 
 
 
 #### 7.3. Lock Evidence Message (Request)
 
-This message is sent from the client (sending gateway) to server (recipient gateway) in response to a Transfer Commence Acknowledge Message from the server.
+The purpose of this message is for the client (sending gateway) to deliver the relevant asset-lock (or escrow) evidence to the server (recipient gateway). 
+
+The format of the evidence is dependent on the DLT fronted by the client and is outside the scope of this specification.
 
 The message must be signed by the client.
 
@@ -532,9 +534,9 @@ The parameters of this message consists of the following:
 
 - message_type REQUIRED urn:ietf:odap:msgtype:lock-evidence-req-msg
 
-- client_identity_pubkey REQUIRED. The gateway who sent this msg
+- client_identity_pubkey REQUIRED. The client who sent this message.
 
-- server_identity_pubkey REQUIRED. The gateway for whom this is intended.
+- server_identity_pubkey REQUIRED. The server for whom this message is intended.
 
 - lock_evidence_claim REQUIRED. The lock or escrow evidence (on the ledger L1 fronted by the client G1).
 
@@ -544,12 +546,31 @@ The parameters of this message consists of the following:
 
 - hash_commence_ack_request REQUIRED. The hash of previous message.
 
-- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only to the client.
 
-- client_signature REQUIRED. The digital signature of the client (gateway G1 as client).
+- client_signature REQUIRED. The digital signature of the client.
 
 
 #### 7.4. Lock-evidence Receipt Message (Response)
+
+The purpose of this message is for the server (recipient gateway) to indicate accaptance of the asset-lock (or escrow) evidence delivered by the client (sending gateway) in the previous message.
+
+The message must be signed by the server.
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED urn:ietf:odap:msgtype:lock-evidence-ack-msg
+
+- client_identity_pubkey REQUIRED. The client for whom this message is intended.
+
+- server_identity_pubkey REQUIRED. The server who sent this message.
+
+- hash_lockevidence_request REQUIRED. The hash of previous message.
+
+- server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the server.	This number is meaningful only to the server.
+
+- server_signature REQUIRED. The digital signature of the server.
+
 
 
 
