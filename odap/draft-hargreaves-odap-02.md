@@ -449,13 +449,15 @@ TBD
 
 This section describes the conveyance of claims regarding to the status of assets or resources from a sender gateway to a recipient gateway.
 
+In this phase, gateways implement the Lock-Evidence Agreement endpoint.
+
 In the following, the sender gateway takes the role of the client while the recipient gateway takes the role of the server.
 
-The flow follows a request-response model. The client makes a request (POST) to the Transfer Request Endpoint (API Type-3) at the server gateway.
+The flow follows a request-response model. The client makes a request (POST) to the Lock-Evidence Agreement endpoint at the server.
 
-Gateways as servers MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] at the Transfer Request Endpoint and the Evidence Validation Endpoint.
+Gateways as servers MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] these endpoints.
   
-Clients MAY use the HTTP GET or POST methods to send the Transfer Commence Request or the Evidence Validation Request to the Recipient Server.	If using the HTTP GET method, the request parameters maybe serialized using URI Query String Serialization.
+Clients MAY use the HTTP GET or POST methods to send messages in this phase to the server. If using the HTTP GET method, the request parameters maybe serialized using URI Query String Serialization.
 
 The client and server may be required to sign certain messages in order to provide standalone proof (for non-repudiation) independent of the secure channel between the client and server.	This proof maybe required for audit verifications post-event.
 
@@ -463,7 +465,9 @@ The client and server may be required to sign certain messages in order to provi
 
 #### 7.1. Transfer Commence Message (Request)
 
-This message is sent from the client (sender gateway) to the Transfer Request Endpoint at the server.	It signals to the server that the client is ready to start the transfer of the digital asset.
+This message is sent from the client (sender gateway) to the Transfer Request Endpoint at the server.	
+
+The purpose of this message is to indicate to the server that the client has accepted the parameters agrees upon in Phase 1 and that the client ready to start the transfer of the digital asset.
 
 The message must contain claims related to the information from the previous flow (Phase 1).	It must be signed by the client (sender gateway).
 
@@ -491,10 +495,12 @@ The parameters of this message consists of the following:
 
 - client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
 
-- client_signature REQUIRED. The gateway's signature (G1 as client)
+- client_signature REQUIRED. The digital signature of the client (gateway G1 as client).
 
 
 #### 7.2. Transfer Commence Acknowledge Message (Response)
+
+The purpose of this message is for the server to indicate agreement of the server to proceed with the asset transfer.
 
 This message is sent from the server (recipient gateway) to client (sender gateway) in response to a Transfer Commence Request from the client.
 
@@ -502,21 +508,46 @@ The message must be signed by the server (recipient gateway).
 
 The parameters of this message consists of the following:
 
-- message_type REQUIRED urn:ietf:odap:msgtype:transfer-commenceresp
+- message_type REQUIRED urn:ietf:odap:msgtype:transfer-commenceresp-msg
 
 - client_identity_pubkey REQUIRED. The gateway who sent this msg
 
 - server_identity_pubkey REQUIRED. The gateway for whom this is intended
 
-- hash_commence_request REQUIRED. The hash of previous request msg
+- hash_commence_request REQUIRED. The hash of previous message.
 
 - server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
 
-- server_signature REQUIRED. The gateway's signature (G2 as server)
+- server_signature REQUIRED. The digital signature of the server (gateway G2 as server).
 
 
 
 #### 7.3. Lock Evidence Message (Request)
+
+This message is sent from the client (sending gateway) to server (recipient gateway) in response to a Transfer Commence Acknowledge Message from the server.
+
+The message must be signed by the client.
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED urn:ietf:odap:msgtype:lock-evidence-req-msg
+
+- client_identity_pubkey REQUIRED. The gateway who sent this msg
+
+- server_identity_pubkey REQUIRED. The gateway for whom this is intended.
+
+- lock_evidence_claim REQUIRED. The lock or escrow evidence (on the ledger L1 fronted by the client G1).
+
+- lock_claim_format OPTIONAL. The format of the evidence.
+
+- lock_evidence_expiration REQUIRED. The duration of time of lock on ledger L1 (after which the lock is released).
+
+- hash_commence_ack_request REQUIRED. The hash of previous message.
+
+- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+
+- client_signature REQUIRED. The digital signature of the client (gateway G1 as client).
+
 
 #### 7.4. Lock-evidence Receipt Message (Response)
 
