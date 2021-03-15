@@ -576,9 +576,48 @@ The parameters of this message consists of the following:
 
 ### 8.	Commitment Establishment Flow (Phase 3) 
 
+This section describes the transfer commitment agreement between the sender gateway to a recipient gateway.
+
+This phase must be completed within the asset-lock duration time specificied in the previous lock_evidence_expiration parameter (message 7.3).
+
+In this phase gateways implement the Transfer Commitment endpoint.
+
+In the following, the sender gateway takes the role of the client while the recipient gateway takes the role of the server.
+
+The flow follows a request-response model. The client makes a request (POST) to the Transfer Commitment endpoint at the server.
+
+Gateways MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] for the endpoint.
+  
+Clients MAY use the HTTP GET or POST methods to send messages in this phase to the server. If using the HTTP GET method, the request parameters maybe serialized using URI Query String Serialization.
+
+The client and server may be required to sign certain messages in order to provide standalone proof (for non-repudiation) independent of the secure channel between the client and server.	This proof maybe required for audit verifications post-event.
+
+(NOTE: nonces are not shown).
+
+
 ##### 8.1 Commit Preparation Message
 
+The purpose of this message is for the client to indicate its readiness to begin the commitment of the transfer.
+
+The message must be signed by the client.
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-prepare-msg
+
+- client_identity_pubkey REQUIRED. The client who sent this message.
+
+- server_identity_pubkey REQUIRED. The server for whom this message is intended.
+
+- hash_lockevidence_ack REQUIRED. The hash of previous message.
+
+- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+
+- client_signature REQUIRED. The digital signature of the client.
+
+
 ##### 8.2 Commit Preparation Response
+
 
 ##### 8.3 Finalize Commitment Message
 
