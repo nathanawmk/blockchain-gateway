@@ -639,6 +639,13 @@ The parameters of this message consists of the following:
 
 ##### 8.3 Finalize Commitment Message
 
+The purpose of this message is for the client to indicate to the server that the client has completed local extinguishment of the asset on its DLT, and that the server must re-create the asset on its DLT.	
+
+The message must contain claims related to the extinguishment of the asset by the client. It must be signed by the client.
+
+
+
+
 ##### 8.4 Finalize Commitment Response
 
 
