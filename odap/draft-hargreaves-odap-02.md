@@ -461,7 +461,7 @@ Clients MAY use the HTTP GET or POST methods to send messages in this phase to t
 
 The client and server may be required to sign certain messages in order to provide standalone proof (for non-repudiation) independent of the secure channel between the client and server.	This proof maybe required for audit verifications post-event.
 
-(NOTE: nonces are not shown).
+(NOTE: Flows occur over TLS. Nonces are not shown).
 
 #### 7.1. Transfer Commence Message (Request)
 
@@ -592,7 +592,7 @@ Clients MAY use the HTTP GET or POST methods to send messages in this phase to t
 
 The client and server may be required to sign certain messages in order to provide standalone proof (for non-repudiation) independent of the secure channel between the client and server.	This proof maybe required for audit verifications post-event.
 
-(NOTE: nonces are not shown).
+(NOTE: Flows occur over TLS. Nonces are not shown).
 
 
 ##### 8.1 Commit Preparation Message
@@ -639,11 +639,25 @@ The parameters of this message consists of the following:
 
 ##### 8.3 Finalize Commitment Message
 
-The purpose of this message is for the client to indicate to the server that the client has completed local extinguishment of the asset on its DLT, and that the server must re-create the asset on its DLT.	
+The purpose of this message is for the client to indicate to the server that the client (sender gateway) has completed local extinguishment of the asset on its DLT (L1), and that now on its part the server (recipient gateway) must re-create (re-generate) the asset on its DLT (L2).	
 
 The message must contain claims related to the extinguishment of the asset by the client. It must be signed by the client.
 
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-final-msg
 
+- client_identity_pubkey REQUIRED. The client who sent this message.
+
+- server_identity_pubkey REQUIRED. The server for whom this message is intended.
+
+- commit_final_claim REQUIRED.	This is one or more claims signed by the client that the asset in question has been extinguished by the client in its local DLT.
+
+- commit_final_claim_format OPTIONAL. This is the format of the claim provided by the client in this message.
+
+- hash_commitprepare_ack REQUIRED. The hash of previous message.
+
+- client_transfer_number OPTIONAL.	This is the transfer identification number chosen by the client.	This number is meaningful only the client.
+
+- client_signature REQUIRED. The digital signature of the client.
 
 
 ##### 8.4 Finalize Commitment Response
