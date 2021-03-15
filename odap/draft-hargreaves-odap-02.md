@@ -618,6 +618,24 @@ The parameters of this message consists of the following:
 
 ##### 8.2 Commit Preparation Response
 
+The purpose of this message is for the server to indicate to the client its readiness to proceed with the commitment finalization step.
+
+The message must be signed by the server.
+
+The parameters of this message consists of the following:
+
+- message_type REQUIRED.	MUST be the value urn:ietf:odap:msgtype:commit-prepareack-msg
+
+- client_identity_pubkey REQUIRED. The client for whom this message is intended.
+
+- server_identity_pubkey REQUIRED. The server who sent this message.
+
+- hash_commitprep REQUIRED. The hash of previous commit preparation message.
+
+- server_transfer_number OPTIONAL.	This is the transfer identification number chosen by the server.	This number is meaningful only the server.
+
+- server_signature REQUIRED. The digital signature of the server.
+
 
 ##### 8.3 Finalize Commitment Message
 
