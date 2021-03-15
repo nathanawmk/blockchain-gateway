@@ -184,13 +184,13 @@ Multi-hop connections between gateways are out of scope of this document.
 
 ## 5. ODAP Message Format, Identifiers and Descriptors
 
-## 5.1.	Overview
+### 5.1.	Overview
 
 This section describes (i) the phases of the ODAP protocol; (ii) the format of ODAP messages; (iii) the format for resource descriptors;
 (iv) a method for gateways to implement access controls; (iv) protocol for negotiating security capabilities; (v) discovery and accessing resources and provisions for backward compatibility with existing systems.
 
 
-## 5.2.	ODAP Message Format
+### 5.2.	ODAP Message Format
 
 ODAP messages are exchanged between applications (clients) and DLT gateways (servers).	They consist of protocol negotiation and functional messages.
 
@@ -296,7 +296,7 @@ A locally unique (within the OU) identifier, which can identify the application,
 odapclient:quant/api.overledger.quant.com/research/luke.riley
 
 
-#### 5.5.	Gateway Level Access Control
+### 5.5.	Gateway Level Access Control
 
 Gateways can enforce access rules based on standard naming conventions using novel or existing mechanisms such as AuthZ protocols using the resource identifiers above, for example:
 
@@ -317,9 +317,9 @@ This method allows resource owners to easily grant access to individuals, groups
 
 
 
-#### 5.6.	Negotiation of Security Protocols and Parameters
+### 5.6.	Negotiation of Security Protocols and Parameters
 
-##### 5.6.1.	TLS Established
+#### 5.6.1.	TLS Established
 
 TLS 1.2 or higher MUST be implemented to protect gateway communications.	TLS 1.3 or higher SHOULD be implemented where both gateways support TLS 1.3 or higher.
 
@@ -328,7 +328,7 @@ TLS 1.2 or higher MUST be implemented to protect gateway communications.	TLS 1.3
 
 Capability negotiation prior to data exchange, follows a scheme similar to the Session Description Protocol [RFC 5939].	Initially the client (application) sends a JSON block containing acceptable credential schemes, e.g.	OAuth2.0, SAML in the "Credential Scheme" field of the ODAP message.
 
-#### 5.6.3.	Server selects supported credential scheme
+### 5.6.3.	Server selects supported credential scheme
 
 The server (DLT Gateway) selects one acceptable credential scheme from the offered schemes, returning the selection in the "Credential Scheme" field of the ODAP message.
 
