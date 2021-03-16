@@ -463,7 +463,7 @@ The client and server may be required to sign certain messages in order to provi
 
 (NOTE: Flows occur over TLS. Nonces are not shown).
 
-### 7.1. Transfer Commence Message (Request)
+### 7.1. Transfer Commence Message
 
 This message is sent from the client (sender gateway) to the server (recipient gateway).	
 
@@ -498,7 +498,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-### 7.2. Transfer Commence Acknowledge Message (Response)
+### 7.2. Transfer Commence Response Message (Ack)
 
 The purpose of this message is for the server to indicate agreement to proceed with the asset transfer.
 
@@ -522,7 +522,7 @@ The parameters of this message consists of the following:
 
 
 
-### 7.3. Lock Evidence Message (Request)
+### 7.3. Lock Evidence Message
 
 The purpose of this message is for the client (sending gateway) to deliver the relevant asset-lock (or escrow) evidence to the server (recipient gateway). 
 
@@ -551,7 +551,7 @@ The parameters of this message consists of the following:
 - client_signature REQUIRED. The digital signature of the client.
 
 
-### 7.4. Lock-evidence Receipt Message (Response)
+### 7.4. Lock Evidence Response Message (Ack)
 
 The purpose of this message is for the server (recipient gateway) to indicate accaptance of the asset-lock (or escrow) evidence delivered by the client (sending gateway) in the previous message.
 
