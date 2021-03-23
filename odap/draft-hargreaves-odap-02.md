@@ -501,7 +501,8 @@ For Example:
 
 The client makes the following HTTP request using TLS
    (with extra line breaks for display purposes only):
- ```
+
+```
    POST /token HTTP/1.1
      Host: server.example.com
      Authorization: Basic awHCaGRSa3F0MzpnWDFmQmF0M2ZG
@@ -522,7 +523,7 @@ The client makes the following HTTP request using TLS
          "client_transfer_number":"ji9876543ewdfgh",
          "client_signature":"fdw34567uyhgfer45"
          }
-     ```
+```
 
 ### 7.2. Transfer Commence Response Message (Ack)
 
