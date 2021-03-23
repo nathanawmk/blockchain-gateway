@@ -501,13 +501,13 @@ For Example:
 
 The client makes the following HTTP request using TLS
    (with extra line breaks for display purposes only):
-
+ ```
    POST /token HTTP/1.1
      Host: server.example.com
      Authorization: Basic awHCaGRSa3F0MzpnWDFmQmF0M2ZG
      Content-Type: application/x-www-form-urlencoded
 
-     ```
+    
          {
          "message_type": "urn:ietf:odap:msgtype:transfer-commence-msg",
          "originator_pubkey":"zGy89097hkbfgkjvVbNH",
