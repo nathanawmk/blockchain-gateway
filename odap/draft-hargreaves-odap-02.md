@@ -499,6 +499,31 @@ The parameters of this message consists of the following:
 
 For Example:
 
+The client makes the following HTTP request using TLS
+   (with extra line breaks for display purposes only):
+
+   POST /token HTTP/1.1
+     Host: server.example.com
+     Authorization: Basic awHCaGRSa3F0MzpnWDFmQmF0M2ZG
+     Content-Type: application/x-www-form-urlencoded
+
+     ```
+         {
+         "message_type": "urn:ietf:odap:msgtype:transfer-commence-msg",
+         "originator_pubkey":"zGy89097hkbfgkjvVbNH",
+         "beneficiary_pubkey": "mBGHJjjuijh67yghb",
+         "sender_dlt_system": "originDLTsystem",
+         "recipient_dlt_system":"recipientDLTsystem",
+         "client_identity_pubkey":"fgH654tgeryuryuy",
+         "server_identity_pubkey":"dFgdfgdfgt43tetr535teyrfge4t54334",
+         "hash_asset_profile":"nbvcwertyhgfdsertyhgf2h3v4bd3v21",
+         "asset_unit": "ghytredcfvbhfr",
+         "hash_prev_message":"DRvfrb654vgreDerverv654nhRbvder4",
+         "client_transfer_number":"ji9876543ewdfgh",
+         "client_signature":"fdw34567uyhgfer45"
+         }
+     ```
+
 ### 7.2. Transfer Commence Response Message (Ack)
 
 The purpose of this message is for the server to indicate agreement to proceed with the asset transfer.
