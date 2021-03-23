@@ -497,6 +497,33 @@ The parameters of this message consists of the following:
 
 - client_signature REQUIRED. The digital signature of the client.
 
+For Example:
+
+The client makes the following HTTP request using TLS
+   (with extra line breaks for display purposes only):
+
+```
+   POST /token HTTP/1.1
+     Host: server.example.com
+     Authorization: Basic awHCaGRSa3F0MzpnWDFmQmF0M2ZG
+     Content-Type: application/x-www-form-urlencoded
+
+    
+         {
+         "message_type": "urn:ietf:odap:msgtype:transfer-commence-msg",
+         "originator_pubkey":"zGy89097hkbfgkjvVbNH",
+         "beneficiary_pubkey": "mBGHJjjuijh67yghb",
+         "sender_dlt_system": "originDLTsystem",
+         "recipient_dlt_system":"recipientDLTsystem",
+         "client_identity_pubkey":"fgH654tgeryuryuy",
+         "server_identity_pubkey":"dFgdfgdfgt43tetr535teyrfge4t54334",
+         "hash_asset_profile":"nbvcwertyhgfdsertyhgf2h3v4bd3v21",
+         "asset_unit": "ghytredcfvbhfr",
+         "hash_prev_message":"DRvfrb654vgreDerverv654nhRbvder4",
+         "client_transfer_number":"ji9876543ewdfgh",
+         "client_signature":"fdw34567uyhgfer45"
+         }
+```
 
 ### 7.2. Transfer Commence Response Message (Ack)
 
@@ -520,7 +547,23 @@ The parameters of this message consists of the following:
 
 - server_signature REQUIRED. The digital signature of the server.
 
+An example successful response:
 
+```
+     HTTP/1.1 200 OK
+     Content-Type: application/json;charset=UTF-8
+     Cache-Control: no-store
+     Pragma: no-cache
+
+     {
+       "message_type":"urn:ietf:odap:msgtype:transfer-commenceack-msg",
+       "client_identity_pubkey":"fgH654tgeryuryuy",
+       "server_identity_pubkey":"dFgdfgdfgt43tetr535teyrfge4t54334",
+       "hash_commence_request":"DRvfrb654vgreDerverv654nhRbvder4",
+       "server_transfer_number":"ji9876543ewdfgh",
+       "server_signature":"aaw34567uyhgfer66"
+     }
+```
 
 ### 7.3. Lock Evidence Message
 
