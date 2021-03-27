@@ -399,7 +399,93 @@ Example of a log entry created by G2, acknowledging G1 locking an asset (phase 2
 "logEntryHash": "[...]"
 }``
 
-## 5. Security Considerations
+## 5. ODAP-2PC 
+ODAP can only function with crash-fault guarantees. ODAP-2PC [HERMES] is a crash fault tolerant protocol that guarantees reliable gateway-to-gateway operations. 
+
+### Protocol description 
+The distributed recovery procedure of ODAP-2PC acts in two phases: first, it assures gateways can recover state after crashes, on the first two phases of ODAP, where a transfer is still not occurrying; and secondly, guarantees atomicity, consistency, durability, and isolation of the cross-gateway transactions occurring at ODAP's commitmment establishment flow.
+Independently of the recovery mode of the gateway, logs are written before operations (write-ahead).
+
+### Transfer  initiation  flow
+For every step of this phase, logs are written before operations are executed. A log entry is written when an operation finishes its execution. 
+If a gateway crashes, upon recovery, it sends a special message RECOVER to the counterparty gateway. The counterparty gateway derives the latest log entry the recover gateway holds, and calculates the difference between its own log (RESPONSE-UPDATE). 
+After that, it sends it back to the recovered gateway, which then updates its own log. After that, a recovery confirmation message is sent (RECOVERY-CONFIRM), and the respective acknowledgment sent by the counterparty gateway (RECOVERY-ACK). 
+The gateways now share the same log, and can proceed its operation.
+Note that if the shared log is blockchain or cloud based, the same flow applies, but the recovered gateway derives the new log, rather than the counterparty gateway.
+
+### Lock-evidence  flow
+If a crash occurs during the lock-evidence flow, the procedure is the same as the transfer initiation flow. However
+
+### Commitment establishment  flow
+This flow requires changes in distributed ledgers - which implies issuing transactions against them.
+As transactions cannot be undone on blockchains, we use a rollback list - keeping an history of the issued transactions.
+If a crash occurs and requires reverting state, transactions with the contrary effects of what is present on the rollaback lists are issued.
+
+1. Rollback lists for all the gateways involved are initialized 
+
+2. On step 2.3, add a pre-lock transaction to the source gateway rollback list
+
+3. On step 3.2, if the request is denied, then abort the transaction and apply rollbacks on the source gateway
+
+4. On step 3.3, add a lock transaction to the source gateway rollback list.
+
+5. On step 3.4, if the commit fails, then abort the transaction and apply rollbacks on the source gateway
+
+6. On step 3.5,  add a create asset transaction to the rollback list of the recipient gateway
+
+7. On step 3.8, if the commit is successful, ODAP terminates.
+
+8: Otherwise, if the last commit is not successful, then abort the transaction and apply rollbacks to both gateways
+
+### ODAP-2PC Logs
+All steps from the three phases need to be captured by a log entry for later use by the gateways running ODAP-2PC.
+Logs are in the format <phase, step, operation, nodes> (generic log), allowing to be serialized.
+
+#### GENERIC-LOG ENTRY
+Format: <phase, step, operation, nodes>
+
+* phase is the ODAP phase (1 - transfer initiation flow, 2 - lock evidence flow, 3 - commitment establishment flow)
+
+* step is a monotonically increasing integer depicting the number of interactions between gateways 
+
+* operation is the type of command issued by a node (gateway).
+
+* nodes are the gateways involved in an interaction. E.g., Gateway A -> Gateway B
+
+There are five types of operations:
+
+1. Operation init- states the intention of a node to execute a particular operation.
+
+2. Operation exec- expresses that the node is executing the operation.
+
+3. Operation done- states when a node successfully executed a step of the protocol
+   
+4. Operation ack- refers to when a node acknowledges a message received from another. 
+   
+5. Operation fail- occurs when an agent fails to execute a specific step.
+
+#### Example:
+See Figure 2
+
+### ODAP-2PC Messages 
+Special messages are required to indicate to the gateways that a recovery is happening, and to guide such recovery.
+
+#### RECOVER 
+(TBD)
+
+#### RECOVER-UDPDATE
+(TBD)
+
+#### RECOVER-CONFIRM
+(TBD)
+
+#### RECOVER-ACK
+(TBD)
+
+#### ROLLBACK
+(TBD)
+
+## 6. Security Considerations
 
 We assume a trusted, secure communication channel between gateways (i.e., messages cannot be spoofed and/or altered by an adversary) using TLS 1.3 or higher. Clients support “acceptable” credential schemes such as OAuth2.0.
 
@@ -428,3 +514,4 @@ References
 
 [OIDC] Sakimura, N., Bradley, J., Jones, M., de Medeiros, B., and C. Mortimore, "OpenID Connect Core 1.0", November 2014, <http://openid.net/specs/openid-connect-core-1_0.html>.
 
+[HERMES] Belchior, R., Vasconcelos, A., Correia, M., Hardjono, T. (2021). TechRxiv 14120291
