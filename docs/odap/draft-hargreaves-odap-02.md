@@ -1,5 +1,10 @@
+## Open Digital Asset Protocol
+### draft-hargreaves-odap-02
 
-# draft-hargreaves-odap-02
+#### M. Hargreaves (Quant Network)
+#### T. Hardjono (MIT)
+#### R. Belchior (INESC-ID, Instituto Superior Tecnico)
+
 
 ## Abstract
 
@@ -124,7 +129,7 @@ The use of these APIs is dependent on the mode of access and the type of flow in
 
 The ODAP protocol defines the following three (3) flows:
 
-- Transfer Initiation flow: This set of flow deals with the asset profile verification, asset ownership evidence verification and identities verification.
+- Transfer Initiation flow: This set of flow deals with the asset profile verification, asset ownership evidence verification and identities verification. It also boostraps the next phases, by explicitly defining the set of operations to be conducted by involved gateways.
 
 - Lock-Evidence Verification flow: This set of flow deals with the conveyance of evidence regarding the lock (escrow) status of an asset by one gateway, and the verification of the evidence by the other gateway.
 
@@ -200,6 +205,12 @@ JSON format message, mandatory fields are shown below:
 
 - Version: ODAP protocol Version (major, minor).
 
+- Session ID: unique identifier (UUIDv2) representing a session
+
+- Sequence Number: monotonically increasing counter that uniquely represents a message from a session. 
+  
+- ODAP Phase: current ODAP phase
+  
 - Resource URL: Location of Resource to be accessed.
 
 - Developer URN: Assertion of developer / application identity.
@@ -214,10 +225,13 @@ JSON format message, mandatory fields are shown below:
 
 - Application Profile: Vendor or Application specific profile
 
-- Payload: Payload for POST, responses, and native DLT txns
+- Payload: Payload for POST, responses, and native DLT txns. The payload is specific to the current ODAP phase.
 
-- Sequence Number: Sequence Number.
+- Payload Hash: hash of the current message payload.
 
+* Message_signature: Gateway EDCSA signature over the message
+
+Other relevant attributes need to be captured for logging purposes [ODAP-2PC].
 
 ### 5.3.	Digital Asset Resource Descriptors
 
@@ -442,6 +456,115 @@ It is also possible to send a fully formatted native message to the underlying D
 
 
 ## 6. Transfer Initiation Flows (Phase 1) 
+
+This section describes ODAP initialization phase, where a sender gateway interacts with a target gateway, proposing
+a session. For this, several artifacts need to be validated: asset profile, asset ownership evidence, identities, and 
+logging-related operations (log profile, access control profile [ODAP-2PC]). 
+
+In this phase, gateways implement the Transfer Initiation Flows endpoint.
+
+In the following, the sender gateway takes instructions from a client application, while the recipient gateway may act on behalf of clients.
+
+The flow follows a request-response model. The sender gateway makes a request (POST) to the Transfer Initiation endpoint at the recipient gateway.
+
+Gateways MUST support the use of the HTTP GET and POST methods defined in RFC 2616 [RFC2616] for the endpoint.
+
+Clients MAY use the HTTP GET or POST methods to send messages in this phase to the server. If using the HTTP GET method, the request parameters maybe serialized using URI Query String Serialization.
+
+The client and server may be required to sign certain messages in order to provide standalone proof (for non-repudiation) independent of the secure channel between the client and server.	This proof maybe required for audit verifications post-event.
+
+(NOTE: Flows occur over TLS. Nonces are not shown).
+
+### 6.1 Initialization Request Message
+This message is sent from the sender gateway to the recipient gateway.
+Note that a client (application) can issue an asset transfer, that is sent to the gateway and converted into an Initialization Request Message.
+
+The purpose of this message is for the client to initiate an asset transfer via its gateway. 
+Depending on the proposal, multiple rounds of  communication between clients and gateways, and between gateways may happen.
+
+The parameters of this message consists of the following:
+
+- Version: ODAP protocol Version (major, minor).
+
+- Developer URN: Assertion of developer / application identity.
+
+- Credential Profile: Specify type of auth (e.g.	SAML, OAuth, X.509)
+
+- Payload Profile: Asset Profile provenance and capabilities
+
+- Application Profile: Vendor or Application specific profile
+
+* logging_profile REQUIRED: contains the profile regarding the logging procedure. Default is local store.
+
+* Access_control_profile REQUIRED: the profile regarding the confidentiality of the log entries being stored. Default is only the gateway that created the logs can access them.
+
+* Initialization Request Message signature REQUIRED: Gateway EDCSA signature over the message
+
+* source_gateway_pubkey REQUIRED: the public key of the gateway initiating a transfer
+
+* source_gateway_dlt_system REQUIRED: the ID  of the source DLT
+
+* recipient_gateway_pubkey REQUIRED: the public key of the gateway involved in a transfer
+
+* recipient_gateway_dlt_system REQUIRED: the ID of the recipient gatewayinvolved in a transfer
+
+* escrow type: faucet, timelock, hashlock, hashtimelock, multi-claim PC, destroy/burn (escrowed cross-claim).
+
+* expiry time: when will the escrow expire?
+
+* multiple claims allowed: true/false
+  
+* multiple cancels allowed: true/false
+
+* permissions: list of identities (addresses/X.509 certificates) that can perform operations on the escrow
+
+* origin: along with the source gateway DLT, allows identifying from where are the funds escrowed/provided
+
+* destination: along with the recipient gateway DLT, allows identifying to where are the escrowed funds going 
+
+* subsequent calls: details possible escrow actions  
+
+* history: provides an history of the escrow, in case it has previously been initialized.
+This includes a list of the transactions on that escrow (transaction ID) and which action it performed (ActionCategory),
+  the origin and destination, balance, current status, and ActionLockSpecificParameters.
+
+The sender gateway makes the following HTTP request using TLS (with extra line breaks for display purposes only):
+TBD
+
+
+### 6.2  Initialization Request Message Response (ACK)
+After receiving an Initialization Request Message, the recipient gateway needs to validate the profiles. 
+This validation could be performed automatically (using a defined set of rules), or by requiring approval by a client application. 
+
+If one of the profiles is rejected, the recipient gateway constructs a Initialization Denied Message, stating what was rejected, and proposing an alternative (if applicable). 
+
+Otherwise, if approved, the recipient gateway constructs a Initialization Request Message Response.
+The purpose of this message is for the server to indicate agreement to proceed with the proposed operations, under the proposed profiles.
+This message states that the next phase may begin.
+
+This message is sent from the recipient gateway to the sender gateway in response to a Initialization Request from the sender gateway.
+
+The message must be signed by the server.
+
+The parameters of this message consists of the following:
+
+- Session ID: unique identifier (UUIDv2) representing a session
+
+- Sequence Number: monotonically increasing counter that uniquely represents a message from a session.
+
+- ODAP Phase: current ODAP phase
+
+- Hash of the Initialization Request Message REQUIRED: the hash of the proposal
+
+- Destination: if the recipient gateway calculates the destination address dynamically. 
+
+* timestamp REQUIRED: timestamp referring to when the Initialization Request Message was received 
+
+* processed timestamp REQUIRED: timestamp referring to when the Initialization Response Message was constructed 
+
+
+
+Example:
 TBD
 
 
@@ -792,6 +915,8 @@ November 1997, <https://www.rfc-editor.org/info/rfc2234>.
 <https://doi.org/10.3389/fbloc.2019.00024>.
 
 [NIST]	Yaga, D., Mell, P., Roby, N., and K. Scarfone, "NIST Blockchain Technology Overview (NISTR-8202)", October 2018, <https://doi.org/10.6028/NIST.IR.8202>.
+
+[ODAP-2PC] Belchior, R., Correia, M., & Hardjono, T. (2021). Gateway Crash Recovery Mechanism draft v1. https://datatracker.ietf.org/doc/draft-belchior-gateway-recovery/
 
 [RFC5939]	Andreasen, F., "Session Description Protocol (SDP) Capability Negotiation", RFC 5939, DOI 10.17487/RFC5939, September 2010, <https://www.rfc-editor.org/info/rfc5939>.
 
