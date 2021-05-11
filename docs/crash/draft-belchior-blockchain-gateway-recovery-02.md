@@ -99,7 +99,7 @@ We consider the log file to be a stack of log entries. Each time a log entry is 
 
 To manipulate the log, we define a set of log primitives, that translate log entry requests from a process into log entries, realized by the log storage API (for the context of ODAP, Section 3.5):
 
-1. writeLogEntry(e,L) (WRITE) - writes a log entry e in the log L
+1. writeLogEntry(e,L) (WRITE) - appends a log entry e in the log L (held by the corresponding Log Storage Support).
 
 2. getLogEntry(i,L) (READ) - retrieves a log entry with index i from log L.
 
@@ -119,6 +119,9 @@ Example 2.1 shows a simplified version log referring to the transfer initiation 
 (simplified, definition in Section 3) is composed by metadata (phase, sequence number) and one attribute from the payload (operation).
 Operations map behavior to state (see Section 3).
 
+The following table illustrates the log storage API. The Function describes the primitive supported by the log storage API. 
+The Parameters column specifies the parameters given to the endpoint as query parameters. Endpoint specifies the endpoint mapping a certain log primitive.
+The column Returns specifies what the contents of "response_data" mean. This last field is illustrated by column Response Example.
 
 
 #### 2.1 Example
@@ -188,22 +191,22 @@ We assume the storage service used provides the means necessary to assure the lo
 The log storage API allows for developers to abstract the log storage support, providing a standardized way
 to interact with logs (e.g., relational vs. non-relational, local vs on-chain). It also handles access control if needed.
 
-
-|                                                                   Function                                                                  |                                   Method                                  |                                                                                         Response Example                                                                                        |
-|:-------------------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| - Persists a log entry at the default storage environment, by appending it to the current log.   -Returns the index of the saved log entry. | POST / writeLogEntry/:log    Host: example.org    Accept: application/json | HTTP/1.1 200 OK Cache-Control: private    Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json 				 				   { 				      "success": true, 				      "response_data":"2" 				   }                        |
-| Obtains the latest log entry from the log.                                                                                                  | GET getLastEntry Host: example.org                                           | HTTP/1.1 200 OK 				 Cache-Control: private 				 Date: Mon, 02 Mar 2020 05:07:35 GMT 				 Content-Type: application/json 				 				 { 				      "success": true, 				      "response_data": 				            "log_entry": {...} 				} |
-| Obtains a log entry with specified ID.                                                                                                      | GET getLogEntry/:id Host: example.org                                     | HTTP/1.1 200 OK 				Cache-Control: private 				Date: Mon, 02 Mar 2020 05:07:35 GMT 				Content-Type: application/json 				 				 { 				      "success": true, 				      "response_data": 				            "log_entry": {...} 				}    |
-| Obtains the whole log.                                                                                                                      | GET getLog Host: example.org                                              | HTTP/1.1 200 OK 				 Cache-Control: private 				 Date: Mon, 02 Mar 2020 05:07:35 GMT 				 Content-Type: application/json 				 				 { 				      "success": true, 				      "response_data": 				            "log": {...} 				}       |
-| Updates the current log. The log is updated if there are new log entries.   Returns the index of the last common log entry (common prefix). | POST updateLog    Host: example.org    Accept: application/json           | HTTP/1.1 200 OK 	     			  Cache-Control: private 				  Date: Mon, 02 Mar 2020 05:07:35 GMT 				  Content-Type: application/json 				 				   { 				      "success": true, 				      "response_data":"2" 				   }                |
-
+| Function                                                      | Parameters                       | Endpoint                                                               | Returns                                  | Response Example                                                                                                                                      |
+|---------------------------------------------------------------|----------------------------------|------------------------------------------------------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Append log entry                                              | logId - log entry to be appended | POST / writeLogEntry/:logId Host: example.org Accept: application/json | The entry index of the last log (string) | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
+| Obtains a log entry                                           | id - log entry id                | GET getLogEntry/:id Host: example.org                                  | A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| Obtains the length of the log                                 | None                             | GET getLogLength Host: example.org                                     | The length of the log (string)           | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
+| Obtains the difference  between a given log and a current log | log - log to be compared         | GET getLogDiff Host: example.org                                       | The difference between two logs          | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| Obtains the last log entry                                    | None                             | GET getLastEntry Host: example.org                                     | A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| Obtains the whole log                                         | None                             | GET getLog Host: example.org                                           | The log                                  | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
 
 #### 2.3.1.  Response Codes
 The log storage API  MUST respond with return codes indicating the failure (error 5XX)
 or success of the operation (200).  The application may carry out further operation in future
 to determine the ultimate status of the operation.
 
-
+The log storage API response is in JSON format and contains two fields: 1) success: true if the operation was successful, 
+and 2) response_data: contains the payload of the response generated by the log storage API.
 
 ## 3. Format of log entries
 
