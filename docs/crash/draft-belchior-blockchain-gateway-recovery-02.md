@@ -275,7 +275,7 @@ In addition to the attributes that belong to ODAP s schema, each log entry REQUI
 
 3. Operation done- states when a node successfully executed a step of the protocol
 
-4. Operation ack- refers to when a node acknowledges a message received from another.
+4. Operation ack- refers to when a node acknowledges a message received from another (e.g., command executed).
 
 5. Operation fail- occurs when an agent fails to execute a specific step.
 
@@ -437,7 +437,7 @@ The parameters of the recover update payload consists of the following:
 
 * recovered logs: the list of log messages that the recovered gateway needs to update
 
-#### 4.3.3 RECOVER-UPDATE Response
+#### 4.3.3 RECOVER-UPDATE ACK (Response to RECOVER-UPDATE)
 The recover-confirm message states if the recovered gateway's logs has been successfuly updated.
 If inconsistencies are detected, the recovered gateway answers with  initiates a dispute (RECOVER-DISPUTE message).
 
@@ -448,7 +448,7 @@ The parameters of this message consists of the following:
 * entries changed: list of hashes of log entries that were appeded to the recovered gateway log
 
 
-#### 4.3.4 RECOVER-ACK
+#### 4.3.4 RECOVER-SUCESS
 The recover-ack message is sent by the counterparty gateway to the recovered gateway acknowledging that the state is synchronized.
 
 The parameters of this message consists of the following:
@@ -484,112 +484,120 @@ There are several situations when a crash may occur.
 
 The following figure represents the source gateway (G1) crashing before it issued an init command to the recipient gateway (G2). 
 
-
-
-     ┌──┐                        ┌──┐                     ┌───────┐
-     │G1│                        │G2│                     │Log API│
-     └──┘                        └──┘                     └───────┘
-      │ 1: [1]: writeLogEntry <p1, 1, init-validate, (GS->GR)>│    
-      │ ──────────────────────────────────────────────────────>    
-      │                           │                           │    
-      │────┐                      │                           │    
-      │    │ [2]  Crash           │                           │    
-      │<───┘  ...                 │                           │    
-      │      [3]recover           │                           │    
-      │                           │                           │    
-      │                           │                           │    
-      │  [4] <p1, 1, RECOVER, GR> │                           │    
-      │ ──────────────────────────>                           │    
-      │                           │                           │    
-      │                           │     [5] getLogEntry(i)    │    
-      │                           │ ──────────────────────────>    
-      │                           │                           │    
-      │                           │       [6] logEntries      │    
-      │                           │ <─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─     
-      │                           │                           │    
-      │  [7] send updated log ul  │                           │    
-      │ <──────────────────────────                           │    
-      │                           │                           │    
-      │────┐                      │                           │    
-      │    │ [8] process log      │                           │    
-      │<───┘                      │                           │    
-      │                           │                           │    
-      │                   [9] updateLog(ul)                   │    
-      │ ──────────────────────────────────────────────────────>    
-      │                           │                           │    
-      │   [10] confirm recovery   │                           │    
-      │ ──────────────────────────>                           │    
-      │                           │                           │    
-      │ [11]  acknowledge recovery│                           │    
-      │ <─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─                            │    
-      │                           │                           │    
-      │        [12]: <p1,2,init-validateNext, (GS->GR)>       │    
-      │ ──────────────────────────────────────────────────────>    
-     ┌──┐                        ┌──┐                     ┌───────┐
-     │G1│                        │G2│                     │Log API│
-     └──┘                        └──┘                     └───────┘
+     ┌──┐                           ┌──┐             ┌───────┐
+     │G1│                           │G2│             │Log API│
+     └──┘                           └──┘             └───────┘
+      │     [1]: writeLogEntry <1, 1, init-validate>   │    
+      │ ─────────────────────────────────────────────────>    
+      │                              │                   │    
+      │────┐                         │                   │    
+      │    │ [2]  Crash              │                   │    
+      │<───┘  ...                    │                   │    
+      │      [3]recover              │                   │    
+      │                              │                   │    
+      │                              │                   │    
+      │      [4] <1, 2, RECOVER>     │                   │    
+      │ ─────────────────────────────>                   │    
+      │                              │                   │    
+      │                              │ [5] getLogEntry(i)│    
+      │                              │ ──────────────────>    
+      │                              │                   │    
+      │                              │   [6] logEntries  │    
+      │                              │ <─ ─ ─ ─ ─ ─ ─ ─ ─     
+      │                              │                   │    
+      │   [7] <1,3,RECOVER-UPDATE>   │                   │    
+      │ <─────────────────────────────                   │    
+      │                              │                   │    
+      │────┐                         │                   │    
+      │    │ [8] process log         │                   │    
+      │<───┘                         │                   │    
+      │                              │                   │    
+      │              [9] <1,4,writeLogEntry>             │    
+      │ ─────────────────────────────────────────────────>    
+      │                              │                   │    
+      │ [10] <1,5,RECOVER-UPDATE-ACK>│                   │    
+      │ ─────────────────────────────>                   │    
+      │                              │                   │    
+      │   [11] <1,6,RECOVER-SUCESS>  │                   │    
+      │ <─────────────────────────────                   │    
+      │                              │                   │    
+      │           [12]: <1,7,init-validateNext>          │    
+      │ ─────────────────────────────────────────────────>    
+     ┌──┐                           ┌──┐             ┌───────┐
+     │G1│                           │G2│             │Log API│
+     └──┘                           └──┘             └───────┘
 
 
 #### 4.4.2 Crashing after issuing a command to the counterparty gateway
 
 The second scenario requires further synchronization (figure below). At the retrieval of the latest log entry, G1 notices its log is outdated. It updates it upon necessary validation and then communicates its recovery to G2. The process then continues as defined.
 
-     ┌──┐                          ┌──┐                        ┌───────┐
-     │G1│                          │G2│                        │Log API│
-     └──┘                          └──┘                        └───────┘
-      │             1: [1]: writeLogEntry init-validate            │    
-      │ ───────────────────────────────────────────────────────────>    
-      │                             │                              │    
-      │ [2]: initiate ODAP's phase 1│                              │    
-      │ ────────────────────────────>                              │    
-      │                             │                              │    
-      │────┐                        │                              │    
-      │    │ [3] Crash              │                              │    
-      │<───┘                        │                              │    
-      │                             │                              │    
-      │                             │    [4]: writeLogEntry init   │    
-      │                             │ ─────────────────────────────>    
-      │                             │                              │    
-      │                             │────┐                              
-      │                             │    │ [5]: execute init from p1    
-      │                             │<───┘                              
-      │                             │                              │    
-      │                             │ [6]: writeLogEntry done-init │    
-      │                             │ ─────────────────────────────>    
-      │                             │                              │    
-      │                             │  [7]: writeLogEntry ack-init │    
-      │                             │ ─────────────────────────────>    
-      │                             │                              │    
-      │   [8] <p1, 1, RECOVER, GR>  │                              │    
-      │ ────────────────────────────>                              │    
-      │                             │                              │    
-      │                             │      [9] getLogEntry(i)      │    
-      │                             │ ─────────────────────────────>    
-      │                             │                              │    
-      │                             │        [10] logEntries       │    
-      │                             │ <─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─    
-      │                             │                              │    
-      │   [11] send updated log ul  │                              │    
-      │ <────────────────────────────                              │    
-      │                             │                              │    
-      │────┐                        │                              │    
-      │    │ [12] process log       │                              │    
-      │<───┘                        │                              │    
-      │                             │                              │    
-      │                     [13] updateLog(ul)                     │    
-      │ ───────────────────────────────────────────────────────────>    
-      │                             │                              │    
-      │    [14] confirm recovery    │                              │    
-      │ ────────────────────────────>                              │    
-      │                             │                              │    
-      │  [15] acknowledge recovery  │                              │    
-      │ <─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─                               │    
-      │                             │                              │    
-      │                   [16]: init-validateNext                  │    
-      │ ───────────────────────────────────────────────────────────>    
-     ┌──┐                          ┌──┐                        ┌───────┐
-     │G1│                          │G2│                        │Log API│
-     └──┘                          └──┘                        └───────┘
+     ┌──┐                           ┌──┐                             ┌───────┐
+     │G1│                           │G2│                             │Log API│
+     └──┘                           └──┘                             └───────┘
+      │              [1]: writeLogEntry <1,1,init-validate>              │    
+      │ ─────────────────────────────────────────────────────────────────>    
+      │                              │                                   │    
+      │   [2]: <1,1,init-validate>   │                                   │    
+      │ ─────────────────────────────>                                   │    
+      │                              │                                   │    
+      │────┐                         │                                   │    
+      │    │ [3] Crash               │                                   │    
+      │<───┘                         │                                   │    
+      │                              │                                   │    
+      │                              │ [4]: writeLogEntry <exec-validate>│    
+      │                              │ ──────────────────────────────────>    
+      │                              │                                   │    
+      │                              │────┐                              │    
+      │                              │    │ [5]: execute init            │    
+      │                              │<───┘                              │    
+      │                              │                                   │    
+      │                              │   [6]: writeLogEntry <done-init>  │    
+      │                              │ ──────────────────────────────────>    
+      │                              │                                   │    
+      │                              │   [7]: writeLogEntry <ack-init>   │    
+      │                              │ ──────────────────────────────────>    
+      │                              │                                   │    
+      │ [8] <1,2,init-validate-ack>  │                                   │    
+      │  discovers that G1 crashed   │                                   │    
+      │  via timeout                 │                                   │    
+      │ <─────────────────────────────                                   │    
+      │                              │                                   │    
+      │────┐                         │                                   │    
+      │    │ [9] Recover             │                                   │    
+      │<───┘                         │                                   │    
+      │                              │                                   │    
+      │     [10] <1, 2, RECOVER>     │                                   │    
+      │ ─────────────────────────────>                                   │    
+      │                              │                                   │    
+      │                              │        [11] getLogEntry(i)        │    
+      │                              │ ──────────────────────────────────>    
+      │                              │                                   │    
+      │                              │          [12] logEntries          │    
+      │                              │ <─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─     
+      │                              │                                   │    
+      │   [13] <1,3,RECOVER-UPDATE>  │                                   │    
+      │ <─────────────────────────────                                   │    
+      │                              │                                   │    
+      │────┐                         │                                   │    
+      │    │ [14] process log        │                                   │    
+      │<───┘                         │                                   │    
+      │                              │                                   │    
+      │                     [15] <1,4,writeLogEntry>                     │    
+      │ ─────────────────────────────────────────────────────────────────>    
+      │                              │                                   │    
+      │ [16] <1,5,RECOVER-UPDATE-ACK>│                                   │    
+      │ ─────────────────────────────>                                   │    
+      │                              │                                   │    
+      │   [17] <1,6,RECOVER-SUCESS>  │                                   │    
+      │ <─────────────────────────────                                   │    
+      │                              │                                   │    
+      │                   [18]: <1,7,init-validateNext>                  │    
+      │ ─────────────────────────────────────────────────────────────────>    
+     ┌──┐                           ┌──┐                             ┌───────┐
+     │G1│                           │G2│                             │Log API│
+     └──┘                           └──┘                             └───────┘
+
 
 ## 5. Security Considerations
 
