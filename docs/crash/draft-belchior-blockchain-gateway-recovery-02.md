@@ -90,7 +90,7 @@ This memo proposes:
 
 * Digital asset: a form of digital medium recordation that is used as a digital representation of a tangible or intangible asset.
 
-### 2. Logging Model
+### 3. Logging Model
 Gateways store logs to map state. There are two types of logs: a private log that stores 
 the current state; and a shared log that stores the joint state between two gateways.
 Using a shared, decentralized log can alleviate trust assumptions between gateways, by providing an agreed upon source of truth.
@@ -115,7 +115,7 @@ From these primitives, other functions can be built:
 
 7. updateLog(l1,l2): updates l1 based on l2 (uses getLogDiff and writeLogEntry).
 
-Example 2.1 shows a simplified version log referring to the transfer initiation flow ODAP phase. Each log entry
+Example 3.1 shows a simplified version log referring to the transfer initiation flow ODAP phase. Each log entry
 (simplified, definition in Section 3) is composed by metadata (phase, sequence number) and one attribute from the payload (operation).
 Operations map behavior to state (see Section 3).
 
@@ -124,7 +124,7 @@ The Parameters column specifies the parameters given to the endpoint as query pa
 The column Returns specifies what the contents of "response_data" mean. This last field is illustrated by column Response Example.
 
 
-#### 2.1 Example
+#### 3.1 Example
      ┌──┐                     ┌──┐                                 ┌───────┐
      │G1│                     │G2│                                 │Log API│
      └──┘                     └──┘                                 └───────┘
@@ -153,16 +153,18 @@ The column Returns specifies what the contents of "response_data" mean. This las
      │G1│                     │G2│                                 │Log API│
      └──┘                     └──┘                                 └───────┘
 
-* At step 1, G1 writes an init-validate operation, meaning it will require G2 to initiate the validate function:
+Example 2.1 shows the sequence of logging operations over part of the first phase of ODAP (simplified):
+
+1. At step 1, G1 writes an init-validate operation, meaning it will require G2 to initiate the validate function:
   This generates a log entry (p1, 1, init-validate).
 
-* At step 2, G2 writes an exec-validate operation, meaning it will try to execute the validate function:
+2. At step 2, G2 writes an exec-validate operation, meaning it will try to execute the validate function:
   This generates a log entry (p1, 2, exec-validate).
 
-* At step 3, G2 writes an done-validate operation, meaning it successfully executed the validate function:
+3. At step 3, G2 writes an done-validate operation, meaning it successfully executed the validate function:
   This generates a log entry (p1, 3, done-validate).
 
-* At step 4, G2 writes an ack-validate operation, meaning it will send an acknowledgement to G1 regarding the done-validate:
+4. At step 4, G2 writes an ack-validate operation, meaning it will send an acknowledgement to G1 regarding the done-validate:
   This generates a log entry (p1, 4, ack-validate).
 
 
@@ -186,20 +188,30 @@ Saving log entries on a DLT may slow down the protocol because issuing a transac
 
 We assume the storage service used provides the means necessary to assure the logs' confidentiality and integrity, stored and in transit. The service must provide an authentication and authorization scheme, e.g., based on OAuth and OIDC [OIDC], and use secure channels based on TLS/HTTPS [TLS].
 
-#### 2.3 Log Storage API:
+#### 2.3 Log Storage API
 
 The log storage API allows for developers to abstract the log storage support, providing a standardized way
 to interact with logs (e.g., relational vs. non-relational, local vs on-chain). It also handles access control if needed.
 
-| Function                                                      | Parameters                       | Endpoint                                                               | Returns                                  | Response Example                                                                                                                                      |
-|---------------------------------------------------------------|----------------------------------|------------------------------------------------------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Append log entry                                              | logId - log entry to be appended | POST / writeLogEntry/:logId Host: example.org Accept: application/json | The entry index of the last log (string) | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
-| Obtains a log entry                                           | id - log entry id                | GET getLogEntry/:id Host: example.org                                  | A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
-| Obtains the length of the log                                 | None                             | GET getLogLength Host: example.org                                     | The length of the log (string)           | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
-| Obtains the difference  between a given log and a current log | log - log to be compared         | GET getLogDiff Host: example.org                                       | The difference between two logs          | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
-| Obtains the last log entry                                    | None                             | GET getLastEntry Host: example.org                                     | A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
-| Obtains the whole log                                         | None                             | GET getLog Host: example.org                                           | The log                                  | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| Function                                                      | Parameters                       | Endpoint                                                               |
+|---------------------------------------------------------------|----------------------------------|------------------------------------------------------------------------|
+| Append log entry                                              | logId - log entry to be appended | POST / writeLogEntry/:logId Host: example.org Accept: application/json |
+| Obtains a log entry                                           | id - log entry id                | GET getLogEntry/:id Host: example.org                                  |
+| Obtains the length of the log                                 | None                             | GET getLogLength Host: example.org                                     |
+| Obtains the difference  between a given log and a current log | log - log to be compared         | GET getLogDiff Host: example.org                                       |
+| Obtains the last log entry                                    | None                             | GET getLastEntry Host: example.org                                     |
+| Obtains the whole log                                         | None                             | GET getLog Host: example.org                                           |
 
+The following table maps the respecetive return values and response examples:
+
+| Returns                                  | Response Example                                                                                                                                      |
+|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| The entry index of the last log (string) | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
+| A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| The length of the log (string)           | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data":"2" }    |
+| The difference between two logs          | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| A log entry                              | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
+| The log                                  | HTTP/1.1 200 OK Cache-Control: private Date: Mon, 02 Mar 2020 05:07:35 GMT Content-Type: application/json { "success": true, "response_data": {...} } |
 #### 2.3.1.  Response Codes
 The log storage API  MUST respond with return codes indicating the failure (error 5XX)
 or success of the operation (200).  The application may carry out further operation in future
@@ -221,23 +233,23 @@ The mandatory fields of a log entry, that are generated by ODAP, are:
 
 - Version: ODAP protocol Version (major, minor).
 
-- Session ID: unique identifier (UUIDv2) representing a session
+- Session ID: unique identifier (UUIDv2) representing a session.
 
 - Sequence Number: monotonically increasing counter that uniquely represents a message from a session.
 
-- ODAP Phase: current ODAP phase
+- ODAP Phase: current ODAP phase.
 
 - Resource URL: Location of Resource to be accessed.
 
 - Developer URN: Assertion of developer / application identity.
 
-- Action/Response: GET/POST and arguments (or Response Code)
+- Action/Response: GET/POST and arguments (or Response Code).
 
-- Credential Profile: Specify type of auth (e.g.	SAML, OAuth, X.509)
+- Credential Profile: Specify type of auth (e.g.	SAML, OAuth, X.509).
 
-- Credential Block: Credential token, certificate, string
+- Credential Block: Credential token, certificate, string.
 
-- Payload Profile: Asset Profile provenance and capabilities
+- Payload Profile: Asset Profile provenance and capabilities.
 
 - Application Profile: Vendor or Application specific profile
 
@@ -248,21 +260,21 @@ The mandatory fields of a log entry, that are generated by ODAP, are:
 
 In addition to the attributes that belong to ODAP s schema, each log entry REQUIRES the following attributes:
 
-* timestamp REQUIRED: timestamp referring to when the log entry was generated (UNIX format)
+* timestamp REQUIRED: timestamp referring to when the log entry was generated (UNIX format).
 
-* source_gateway_pubkey REQUIRED: the public key of the gateway initiating a transfer
+* source_gateway_pubkey REQUIRED: the public key of the gateway initiating a transfer.
 
-* source_gateway_dlt_system REQUIRED: the ID  of the source DLT
+* source_gateway_dlt_system REQUIRED: the ID  of the source DLT.
 
-* recipient_gateway_pubkey REQUIRED: the public key of the gateway involved in a transfer
+* recipient_gateway_pubkey REQUIRED: the public key of the gateway involved in a transfer.
 
-* recipient_gateway_dlt_system REQUIRED: the ID of the recipient gatewayinvolved in a transfer
+* recipient_gateway_dlt_system REQUIRED: the ID of the recipient gatewayinvolved in a transfer.
 
 * logging_profile REQUIRED: contains the profile regarding the logging procedure. Default is local store.
 
-* Message_signature REQUIRED: Gateway EDCSA signature over the log entry
+* Message_signature REQUIRED: Gateway EDCSA signature over the log entry.
 
-* Last_entry_hash REQUIRED: Hash of previous log entry
+* Last_entry_hash REQUIRED: Hash of previous log entry.
 
 * Access_control_profile REQUIRED: the profile regarding the confidentiality of the log entries being stored. Default is only the gateway that created the logs can access them.
 
@@ -273,7 +285,7 @@ In addition to the attributes that belong to ODAP s schema, each log entry REQUI
 
 2. Operation exec- expresses that the node is executing the operation.
 
-3. Operation done- states when a node successfully executed a step of the protocol
+3. Operation done- states when a node successfully executed a step of the protocol.
 
 4. Operation ack- refers to when a node acknowledges a message received from another (e.g., command executed).
 
@@ -284,13 +296,13 @@ In addition to the attributes that belong to ODAP s schema, each log entry REQUI
 
 Optional log entry fields are:
 
-* source_gateway_uid OPTIONAL: the uid of the source gateway involved in a transfer
+* source_gateway_uid OPTIONAL: the uid of the source gateway involved in a transfer.
 
-* recipient_gateway_uid : the uid of the recipient gateway involved in a transfer
+* recipient_gateway_uid : the uid of the recipient gateway involved in a transfer.
 
 * recovery message: the type of recovery message, if gateway is involved in a recovery procedure.
 
-* recovery payload: the payload associated with the recovery message
+* recovery payload: the payload associated with the recovery message.
 
 Example of a log entry created by G1, corresponding to locking an asset (phase 2.3 of the ODAP protocol) :
 
@@ -357,7 +369,7 @@ In Self-healing mode, when a gateway restarts after a crash, it reads the state 
 In Primary-backup mode, we assume that after a period T of the primary gateway failure, a backup gateway detects that failure unequivocally and takes the role of the primary gateway. The failure is detected using heartbeat messages and a conservative value for T. The backup gateway does virtually the same as the gateway in self-healing mode: reads the log and continues the process. The difference is that the log must be shared between the primary and the backup gateways. If there is more than one backup, a leader-election protocol may be executed to decide which backup will take the primary role.
 
 
-### 4.2 Recovery procedure
+### 4.2 Recovery Procedure
 
 Gateways can crash at several points of the protocol.
 
@@ -376,57 +388,57 @@ This message allows the non-crashed log to collect the potentially missing log e
 The recovered gateway can now reconstruct the updated log and derive the current state of the asset transfer.
 For each phase:
 
-#### 4.2.1 Transfer  initiation  flow
+#### 4.2.1 Transfer  Initiation  Flow
 For every step of this phase, logs are written before operations are executed. A log entry is written when an operation finishes its execution.
 If a gateway crashes, upon recovery, it sends a special message RECOVER to the counterparty gateway. The counterparty gateway derives the latest log entry the recover gateway holds, and calculates the difference between its own log (RESPONSE-UPDATE).
 After that, it sends it back to the recovered gateway, which then updates its own log. After that, a recovery confirmation message is sent (RECOVERY-CONFIRM), and the respective acknowledgment sent by the counterparty gateway (RECOVERY-ACK).
 The gateways now share the same log, and can proceed its operation.
 Note that if the shared log is blockchain or cloud based, the same flow applies, but the recovered gateway derives the new log, rather than the counterparty gateway.
 
-#### 4.2.2 Lock-evidence  flow
+#### 4.2.2 Lock-Evidence  Flow
 If a crash occurs during the lock-evidence flow, the procedure is the same as the transfer initiation flow. However
 
-#### 4.2.3 Commitment establishment  flow
+#### 4.2.3 Commitment Establishment  Flow
 This flow requires changes in distributed ledgers - which implies issuing transactions against them.
 As transactions cannot be undone on blockchains, we use a rollback list - keeping an history of the issued transactions.
 If a crash occurs and requires reverting state, transactions with the contrary effects of what is present on the rollaback lists are issued.
 
-1. Rollback lists for all the gateways involved are initialized
+1. Rollback lists for all the gateways involved are initialized.
 
-2. On step 2.3, add a pre-lock transaction to the source gateway rollback list
+2. On step 2.3, add a pre-lock transaction to the source gateway rollback list.
 
-3. On step 3.2, if the request is denied, then abort the transaction and apply rollbacks on the source gateway
+3. On step 3.2, if the request is denied, then abort the transaction and apply rollbacks on the source gateway.
 
 4. On step 3.3, add a lock transaction to the source gateway rollback list.
 
-5. On step 3.4, if the commit fails, then abort the transaction and apply rollbacks on the source gateway
+5. On step 3.4, if the commit fails, then abort the transaction and apply rollbacks on the source gateway.
 
-6. On step 3.5,  add a create asset transaction to the rollback list of the recipient gateway
+6. On step 3.5,  add a create asset transaction to the rollback list of the recipient gateway.
 
 7. On step 3.8, if the commit is successful, ODAP terminates.
 
-8: Otherwise, if the last commit is not successful, then abort the transaction and apply rollbacks to both gateways
+8: Otherwise, if the last commit is not successful, then abort the transaction and apply rollbacks to both gateways.
 
 
-### 4.3 ODAP-2PC Messages
+### 5.3 ODAP-2PC Messages
 ODAP-2PC messages are used to recover from crashes at the several ODAP phases.
 These messages inform gateways of the current state of a recovery procedure.
-ODAP-2PC messages follow log format from Section 3.
+ODAP-2PC messages follow log format from Section 4.
 
-#### 4.3.1 RECOVER
+#### 5.3.1 RECOVER
 A recover message is sent from the crashed gateway to the counterparty gateway, sending its most recent state.
 This message type is encoded on the recovery message field of an ODAP log.
 
 The parameters of the recovery message payload consists of the following:
 
-* ODAP phase: latest ODAP phase registered
+* ODAP phase: latest ODAP phase registered.
 
 * Sequence number: latest sequence number registered.
 
-* Last_entry_hash REQUIRED: Hash of previous log entry
+* Last_entry_hash REQUIRED: Hash of previous log entry.
 
 
-#### 4.3.2 RECOVER-UDPDATE
+#### 5.3.2 RECOVER-UDPDATE
 The recover update message is sent by the counterparty gateway after receiving a recover message from a recovered gateway.
 The recovered gateway informs of its current state (via the current state of the log).
 The counterparty gateway now calculates the difference between the log entry corresponding to the received sequence number from the recovered gateway and
@@ -437,18 +449,18 @@ The parameters of the recover update payload consists of the following:
 
 * recovered logs: the list of log messages that the recovered gateway needs to update
 
-#### 4.3.3 RECOVER-UPDATE ACK (Response to RECOVER-UPDATE)
-The recover-confirm message states if the recovered gateway's logs has been successfuly updated.
+#### 5.3.3 RECOVER-UPDATE ACK 
+The recover-update ack message (response to RECOVER-UPDATE) states if the recovered gateway's logs has been successfully updated.
 If inconsistencies are detected, the recovered gateway answers with  initiates a dispute (RECOVER-DISPUTE message).
 
 The parameters of this message consists of the following:
 
-* success: true/false
+* success: true/false.
 
-* entries changed: list of hashes of log entries that were appeded to the recovered gateway log
+* entries changed: list of hashes of log entries that were appeded to the recovered gateway log.
 
 
-#### 4.3.4 RECOVER-SUCESS
+#### 5.3.4 RECOVER-SUCCESS
 The recover-ack message is sent by the counterparty gateway to the recovered gateway acknowledging that the state is synchronized.
 
 The parameters of this message consists of the following:
@@ -456,16 +468,16 @@ The parameters of this message consists of the following:
 * success: true/false
 
 
-#### 4.3.5. ROLLBACK
+#### 5.3.5. ROLLBACK
 A rollback message is sent by a gateway that initiated a rollback as defined by ODAP-2PC.
 
 The parameters of this message consists of the following:
 
-* success: true/false
+* success: true/false.
 
-* actions performed: actions performed to rollback a state (e.g., UNLOCK; BURN)
+* actions performed: actions performed to rollback a state (e.g., UNLOCK; BURN).
 
-* proofs: TBD
+* proofs: TBD.
 
 (TBD)
 
@@ -477,10 +489,10 @@ The parameters of this message consists of the following:
 * success: true/false
 
 
-### 4.4 Examples 
+### 5.4 Examples 
 
 There are several situations when a crash may occur.
-#### 4.4.1 Crashing before issuing a command to the counterparty gateway
+#### 5.4.1 Crashing before issuing a command to the counterparty gateway
 
 The following figure represents the source gateway (G1) crashing before it issued an init command to the recipient gateway (G2). 
 
@@ -528,7 +540,7 @@ The following figure represents the source gateway (G1) crashing before it issue
      └──┘                           └──┘             └───────┘
 
 
-#### 4.4.2 Crashing after issuing a command to the counterparty gateway
+#### 5.4.2 Crashing after issuing a command to the counterparty gateway
 
 The second scenario requires further synchronization (figure below). At the retrieval of the latest log entry, G1 notices its log is outdated. It updates it upon necessary validation and then communicates its recovery to G2. The process then continues as defined.
 
@@ -599,7 +611,7 @@ The second scenario requires further synchronization (figure below). At the retr
      └──┘                           └──┘                             └───────┘
 
 
-## 5. Security Considerations
+## 6. Security Considerations
 
 We assume a trusted, secure communication channel between gateways (i.e., messages cannot be spoofed and/or altered by an adversary) using TLS 1.3 or higher. Clients support “acceptable” credential schemes such as OAuth2.0.
 
