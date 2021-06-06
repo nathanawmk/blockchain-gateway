@@ -13,27 +13,13 @@ This repository holds ongoing standardization efforts at the Internet Engineerin
 Internet drafts are located under /docs
 
 #### Open Digital Asset Protocol (draft-hargreaves-odap)
-[Currently at version 01](https://datatracker.ietf.org/doc/draft-hargreaves-odap/)
+[Currently at version 02](https://datatracker.ietf.org/doc/draft-hargreaves-odap/)
 
 #### An Interoperability Architecture for Blockchain Gateways (draft-hardjono-blockchain-interop-arch)
 [Currently at version 01](https://datatracker.ietf.org/doc/draft-hardjono-blockchain-interop-arch/)
 
 #### DLT Gateway Crash Recovery Mechanism draft (draft-belchior-blockchain-gateway-recovery)
-[Currently at version 01](https://datatracker.ietf.org/doc/draft-belchior-gateway-recovery/)
+[Currently at version 02](https://datatracker.ietf.org/doc/draft-belchior-gateway-recovery/)
 
 #### Blockchain Gateways: Use-Cases draft (draft-sardon-blockchain-gateways-usecases)
 [Currently at version 01](https://datatracker.ietf.org/doc/draft-sardon-blockchain-gateways-usecases/)
-
-### PoC
-This is a Blockchain-gateway ODAP Node JS implementation for helping you to show proof of concept.
-- Architect: Mizanul Hoq Chowdhury, MIT
-
-#### Database:
-Mongo DB
-
-#### Model:
-
-#### TransferCommenceRequestMessage
-
-#### TransferCommenceResponseMessage
-
