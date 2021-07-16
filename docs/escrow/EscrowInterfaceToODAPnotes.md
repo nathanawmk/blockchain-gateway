@@ -12,20 +12,26 @@ Phase 0 & 1:
 1.  G1 finds G2 on B2 and checks that G2 can print token T1 on B2.
 
 Phase 2:
+
 2. Skipped (from https://arxiv.org/pdf/2102.03933.pdf) -> as in this re-write, the asset is already locked in part 0.
 3. Lock/Escrow Evidence: provided from G1 to G2, including the hashlock h.
 4. Mint-Prepare: G2 now adds a transaction onto B2 that will print token T1 to Alice’s B2 address IFF a secret s is revealed where hash(s) = h AND this secret is reveal at a time < 2 hours - X (where X is our transaction confirmation on the blockchain safety interval). (Note that the token to be minted is not under the control of G2). 
-5A. Evidence-Receipt. (If evidence is not convincing, G1 starts again at part 1).
-5B. Evidence-Receiver: G1 records onto B1 the future new home of Token T1, should the escrow be claimed. (This used to be part 12, but has been moved up so that Alice can evaluate and show implicit agreement with it).
 
-Phase 3 (this is a bit different to the previous Figure 3 version)
-6A. Secret reveal: If the evidence-receipt and evidence-receiver convinces Alice, then she is incentivised to reveal the secret s to G2. (If Alice is not convinced, she either will have to start again at phase 0, or inform G1 to find another partner gateway).
-6B. Commit-Prepare: G2 sends commit-prepare to G1 with the secret s included.
+&nbsp; &nbsp; 5A. Evidence-Receipt. (If evidence is not convincing, G1 starts again at part 1).
+
+&nbsp; &nbsp; 5B. Evidence-Receiver: G1 records onto B1 the future new home of Token T1, should the escrow be claimed. (This used to be part 12, but has been moved up so that Alice can evaluate and show implicit agreement with it).
+
+Phase 3 (this is a bit different to the previous Figure 3 version):
+
+&nbsp; &nbsp; 6A. Secret reveal: If the evidence-receipt and evidence-receiver convinces Alice, then she is incentivised to reveal the secret s to G2. (If Alice is not convinced, she either will have to start again at phase 0, or inform G1 to find another partner gateway).
+
+&nbsp; &nbsp; 6B. Commit-Prepare: G2 sends commit-prepare to G1 with the secret s included.
+
 7. Prepare-Acknowledge: from G1 to G2
 8. Finalise-Lock: G1 claims from the escrow, sending B1’s Token T1 to the burn address.
 9. Commit-Final: G1 sends commit-final to G2.
 10. Mint-Finalise: G2 sends a transaction onto B2 to complete the minting of Token T1 on B2.
-11 Final-Acknowledge
+11. Final-Acknowledge
 
 
 Benefits:
