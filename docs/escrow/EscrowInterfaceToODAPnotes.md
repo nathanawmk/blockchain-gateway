@@ -8,7 +8,7 @@ Furthermore, we may be able to utilise this escrow definition to modify the ODAP
 
 Phase 0 & 1:
 
-0. Alice = originator, she performs an asset-move request to G1 by adding a transaction onto Blockchain B1 to create a HashTimeLock escrow (as defined in this folder) for token T1 in Gateway’s G1 escrow contract. The escrow originId = Alice and destinationId= a DLT Specific Burn Address. Lets say the escrow has a timelock of 2 hours and a hash lock h. (Note that the token is not under the control of G1).
+0. Alice = originator, she performs an asset-move request to G1 AFTER adding a transaction onto Blockchain B1 to create a HashTimeLock escrow (as defined in this folder) for token T1 into an escrow contract. The escrow originId = Alice and destinationId= a DLT Specific Burn Address. Lets say the escrow has a timelock of 2 hours and a hash lock h. (Note that the token is not under the control of G1).
 1.  G1 finds G2 on B2 and checks that G2 can print token T1 on B2.
 
 Phase 2:
