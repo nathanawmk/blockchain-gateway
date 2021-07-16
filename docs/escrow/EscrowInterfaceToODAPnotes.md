@@ -23,7 +23,7 @@ Phase 2:
 
 Phase 3 (this is a bit different to the previous Figure 3 version):
 
-&nbsp; &nbsp; 6A. Secret reveal: If the evidence-receipt and evidence-receiver convinces Alice, then she is incentivised to reveal the secret s to G2. (If Alice is not convinced, she either will have to start again at phase 0, or inform G1 to find another partner gateway).
+&nbsp; &nbsp; 6A. Secret reveal: If the evidence-receipt and evidence-receiver convinces Alice (OR Bob if secret was passed to Bob after phase 0 - Bob is the receiver in Figure 3 of https://arxiv.org/pdf/2102.03933.pdf), then she/he is incentivised to reveal the secret s to G2. (If Alice/Bob is not convinced, the process will have to start again at phase 0, or G1 can be somehow informed to find another partner gateway).
 
 &nbsp; &nbsp; 6B. Commit-Prepare: G2 sends commit-prepare to G1 with the secret s included.
 
