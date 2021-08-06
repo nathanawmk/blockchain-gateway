@@ -200,9 +200,10 @@ This section describes (i) the phases of the ODAP protocol; (ii) the format of O
 ODAP messages are exchanged between applications (clients) and DLT gateways (servers).	They consist of protocol negotiation and functional messages.
 
 Messages are JSON format, with protocol specific mandatory fields, support for arbitrary authentication and authorization schemes and support for a free format field for plaintext or encrypted payloads directed at the DLT gateway or an underlying DLT.
+An ODAP message is encoded in the JSON format, and is composed by an ODAP Header and an ODAP Payload.
 
-JSON format message, mandatory fields are shown below: 
 
+The ODAP header is composed by the following mandatory fields:
 - Version: ODAP protocol Version (major, minor).
 
 - Session ID: unique identifier (UUIDv2) representing a session
@@ -210,26 +211,14 @@ JSON format message, mandatory fields are shown below:
 - Sequence Number: monotonically increasing counter that uniquely represents a message from a session. 
   
 - ODAP Phase: current ODAP phase
-  
-- Resource URL: Location of Resource to be accessed.
 
-- Developer URN: Assertion of developer / application identity.
+- Message_signature: Gateway EDCSA signature over the ODAP header and ODAP payload. 
 
-- Action/Response: GET/POST and arguments (or Response Code)
-
-- Credential Profile: Specify type of auth (e.g.	SAML, OAuth, X.509)
-
-- Credential Block: Credential token, certificate, string
-
-- Payload Profile: Asset Profile provenance and capabilities
-
-- Application Profile: Vendor or Application specific profile
-
+The ODAP Payload has the following mandatory fields:
 - Payload: Payload for POST, responses, and native DLT txns. The payload is specific to the current ODAP phase.
 
 - Payload Hash: hash of the current message payload.
 
-* Message_signature: Gateway EDCSA signature over the message
 
 Other relevant attributes need to be captured for logging purposes [ODAP-2PC].
 
@@ -484,15 +473,18 @@ Depending on the proposal, multiple rounds of  communication between clients and
 
 The parameters of this message consists of the following:
 
-- session_id: the UUIDv2 representing an interactive session between two gateways.  
 
 - version: ODAP protocol Version (major, minor).
 
 - developer_urn: Assertion of developer / application identity.
 
+- resource urn: Location of Resource to be accessed.
+
 - credential_profile: Specify type of auth (e.g.	SAML, OAuth, X.509).
 
-- asset_profile: Specify type of asset.
+- credential_block: Credential token, certificate, string
+  
+- asset_profile: Specify asset-related information (e.g., type).
 
 - application_profile: Vendor or Application specific profile.
 
@@ -512,21 +504,7 @@ The parameters of this message consists of the following:
 
 * recipient_gateway_dlt_system_configuration REQUIRED: the configuration file of the recipient gateway DLT system.
 
-* escrow type: faucet, timelock, hashlock, hashtimelock, multi-claim PC, destroy/burn (escrowed cross-claim).
-
-* expiry time: Specifies the expiration time for an escrow.
-
-* multiple claims allowed: true/false.
-  
-* multiple cancels allowed: true/false.
-
-* permissions: list of identities (addresses/X.509 certificates) that can perform operations on the escrow.
-
-* escrow_origin: along with the source gateway DLT, allows identifying from where are the funds escrowed/provided.
-
-* escrow_destination: along with the recipient gateway DLT, allows identifying to where are the escrowed funds going. 
-
-* subsequent calls: details possible escrow actions.
+* transfer _profile: details if interaction is a single time transfer or multiple time transfer, and in which terms does it occur.
 
 * history: provides an history of the escrow, in case it has previously been initialized.
 This includes a list of the transactions on that escrow (transaction ID) and which action it performed (ActionCategory),
@@ -582,7 +560,22 @@ In this example, we show a hypotethical asset transfer between Quant and Swissco
 
 #### 6.1.1 Detailed description of profiles
 
-TBD
+##### 6.1.2 Transfer Profile
+* escrow type: faucet, timelock, hashlock, hashtimelock, multi-claim PC, destroy/burn (escrowed cross-claim).
+
+* expiry time: Specifies the expiration time for an escrow.
+
+* multiple claims allowed: true/false.
+
+* multiple cancels allowed: true/false.
+
+* permissions: list of identities (addresses/X.509 certificates) that can perform operations on the escrow.
+
+* escrow_origin: along with the source gateway DLT, allows identifying from where are the funds escrowed/provided.
+
+* escrow_destination: along with the recipient gateway DLT, allows identifying to where are the escrowed funds going.
+
+* subsequent calls: details possible escrow actions.
 
 ### 6.2  Initialization Request Message Response (ACK)
 After receiving an Initialization Request Message, the recipient gateway needs to validate the profiles. 
@@ -813,7 +806,29 @@ Example:
             }
 ```
 
+#### 7.3.1 lock_evidence_claim format for Hyperledger Fabric v2
+The lock_evidence_claim (or transaction receipt) is composed of the following attributes:
 
+* hash of the transaction
+
+* block number
+
+#### 7.3.2 lock_evidence_claim format for Ethereum
+The lock_evidence_claim (or transaction receipt) is composed of the following attributes:
+
+* certificate of the block creator
+
+* signature of the block creator
+
+* block number
+
+* transaction id
+
+* chaincode name and version
+
+* client application signature 
+
+* endorsement list 
 ### 7.4. Lock Evidence Response Message (Ack)
 
 The purpose of this message is for the server (recipient gateway) to indicate accaptance of the asset-lock (or escrow) evidence delivered by the client (sending gateway) in the previous message.
@@ -990,9 +1005,39 @@ The parameters of this message consists of the following:
 
 - client_signature REQUIRED. The digital signature of the client.
 
+##9 Gateway to Gateway Asset Transfer Examples
 
+### 9.1 Simple Asset Transfer between Two Gateways
+Sender Gateway: Gateway A (GA)
+Receipient Gatewey: Gateway B (GB)
 
-## 9.	Security Consideration
+Access Mode: Direct Mode
+
+Each gateway has an API of each Type (Type-1, Type-2, Type-3).
+
+Each gateway has a user connecting to it via API Type-2 (UA and UB)
+
+Crash Recovery: Self Healing
+
+1. UA communicates with GA via API Type-2 requesting for a transfer to UB.
+
+1. GA initiates an ODAP session with GB via API Type-1.
+
+1. GA and GB start the transfer initiation flow phase.
+
+1. Checks are done from GB via API Type-3
+
+1. GA locks an asset on behalf of UA in the Lock-Evidence Verification Flow
+
+1. GB commits to the transfer in the Commitment Establishment Flow. (Optionally, GB verifies the lock at GA, and creates a representation of the asset on the recipient DLT)
+
+1. GA and GB finalize the transfer. 
+
+1. GB communicates the result to UB.
+
+TBD: Sequence diagram
+
+## 10.	Security Consideration
 
 Although the current interoperability architecture for blockchain gateways assumes the externalization of the value of assets, as a blockchain system holds an increasing number of virtual assets it becomes attractive to attackers seeking to obtain cryptographic keys of its nodes and its end-users.
 
@@ -1004,12 +1049,12 @@ The application must evaluate the correctness of responses from the gateway in c
 
 
 
-## 10.	IANA Consideration (TBD)
+## 11.	IANA Consideration (TBD)
 
 
-## 11.	References
+## 12.	References
 
-### 11.1.	Normative References
+### 12.1.	Normative References
   
 [RFC2119]	Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119,
 DOI 10.17487/RFC2119, March 1997,
