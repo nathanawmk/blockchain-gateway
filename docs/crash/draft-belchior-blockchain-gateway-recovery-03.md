@@ -91,10 +91,9 @@ This memo proposes:
 * Digital asset: a form of digital medium recordation that is used as a digital representation of a tangible or intangible asset.
 
 ### 3. Logging Model
-Gateways store logs to map state. Besides private logs that gateways can use to log business-related information, there is 
-a state log, that can be public, private, or semi-private. The type of the state log depends on the trust assumptions among gateways. 
+Gateways store logs to map state. Besides private logs that gateways can use to log business-related information, there is a state log, that can be public, private, or semi-private. The type of the state log depends on the trust assumptions among gateways and on the access mode [ODAP].
 
-Using a public (decentralized) log can alleviate trust assumptions between gateways, by providing an agreed upon source of truth.
+By default, if there are gateways from different institutions involved in an asset transfer, the storage mode should be a decentralized log storage. The decentralized log storage can provide a common source of truth to solve disputes and maintain shared state, alleviating trust assumptions between gateways.
 
 We consider the log file to be a stack of log entries. Each time a log entry is added, it goes to the top of the stack (the highest index).
 
@@ -177,18 +176,20 @@ Different log storage modes (or log support) exist: public, semi-private, and pr
 
 1. The public log is stored on a decentralized log storage (e.g., blockchain-based). Each gateway writes log entries to a decentralized log storage, in plain text.
 Although this is the best option for providing availability and integrity of the logs, leading to shorter dispute resolution, this can cause privacy issues.
+This mode is recommended when gateways operate in the  Relay Mode: Client-initiated Gateway to Gateway. This mode can also be used by the Direct Mode: Client to Multiple Gateway access mode because gateways may need to share state between themselves.
+Note: the difference between the mentioned modes is that in Direct Mode: Client to Multiple Gateway, a single client/organization controls all the gateways, whereas in the Relay Mode, gateways are controlled by different organizations.
 
-2. Gateways can opt for a semi-private log. Each gateway saves the state log locally. For each state log entry a gateway stores locally (or in a cloud service), a hash of that log is publised in a decentralized log storage.
-This still ensures integrity, but lower availability guarantees, since a gateway needs to wait for the counterparty gateway to delvier the logs. The integrity of the log can be asserted by hashing the entries and comparing it to each stored hash on the decentralized log storage.
-In this case, the decentralized log storage acts as a notarizing service. 
+2. Gateways can opt for a semi-private log. Each gateway saves the state log locally. For each state log entry a gateway stores locally (or in a cloud service), a hash of that log is published in a decentralized log storage.
+This still ensures integrity, but lower availability guarantees, since a gateway needs to wait for the counter-party gateway to deliver the logs. The integrity of the log can be asserted by hashing the entries and comparing it to each stored hash on the decentralized log storage.
+In this case, the decentralized log storage acts as a notarizing service. This mode is recommended for the Direct Mode: Simple Client to Gateway because gateways can prove past behavior to auditors. 
 
-3. The private log storage mode, each gateway stores logs locally. If needed, logs are asked from the counterparty gateway.
+3. The private log storage mode, each gateway stores logs locally. If needed, logs are asked from the counter-party gateway.
 Saving logs locally is faster than saving them on the respective ledger but delivers weaker integrity and availability guarantees.
-Saving log entries on a DLT may slow down the protocol because issuing a transaction is several orders of magnitude slower than writing on disk or accessing a cloud service.
+Saving log entries on a DLT may slow down the protocol because issuing a transaction is several orders of magnitude slower than writing on disk or accessing a cloud service. In addition to the above modes, gateways can support the private log storage mode.
 
-Each log storage mode provides a different process to recover state from crashes. In the private log, a gateway simply asks for the most recent log from the counterparty gateway. 
+Each log storage mode provides a different process to recover state from crashes. In the private log, a gateway simply asks for the most recent log from the counter-party gateway. This is the mode where the most trust is needed.
 In the semi-private mode, the gateway performs the steps from the private mode, and additionally checks the integrity of logs against the logs storage on the decentralized log storage.
-In the public mode, the crashed gateway retrieves the most recent log from the decentralized log storage.
+In the public mode, the crashed gateway retrieves the most recent log from the decentralized log storage. This is the most trustless and decentralized mode of operation.
 
 
 
@@ -390,7 +391,7 @@ Two situations might occur:
 for gateways with their local log plus a shared log, the crashed gateway attempts to perform an update to its local log, using getLogDiff from the shared log.
 
 
-If there is no shared log, the crashed gateway needs to synchronize itself with the counterparty gateway, by querying the counterparty gateway with a recovery message containing the latest log before crash.
+If there is no shared log, the crashed gateway needs to synchronize itself with the counter-party gateway, by querying the counter-party gateway with a recovery message containing the latest log before crash.
 This message allows the non-crashed log to collect the potentially missing log entries from the crashed log. After that, the non-crashed log shares those entries with the now recover gateway.
 
 The recovered gateway can now reconstruct the updated log and derive the current state of the asset transfer.
@@ -398,10 +399,10 @@ For each phase:
 
 #### 6.2.1 Transfer  Initiation  Flow
 For every step of this phase, logs are written before operations are executed. A log entry is written when an operation finishes its execution.
-If a gateway crashes, upon recovery, it sends a special message RECOVER to the counterparty gateway. The counterparty gateway derives the latest log entry the recover gateway holds, and calculates the difference between its own log (RESPONSE-UPDATE).
-After that, it sends it back to the recovered gateway, which then updates its own log. After that, a recovery confirmation message is sent (RECOVERY-CONFIRM), and the respective acknowledgment sent by the counterparty gateway (RECOVERY-ACK).
+If a gateway crashes, upon recovery, it sends a special message RECOVER to the counter-party gateway. The counter-party gateway derives the latest log entry the recover gateway holds, and calculates the difference between its own log (RESPONSE-UPDATE).
+After that, it sends it back to the recovered gateway, which then updates its own log. After that, a recovery confirmation message is sent (RECOVERY-CONFIRM), and the respective acknowledgment sent by the counter-party gateway (RECOVERY-ACK).
 The gateways now share the same log, and can proceed its operation.
-Note that if the shared log is blockchain or cloud based, the same flow applies, but the recovered gateway derives the new log, rather than the counterparty gateway.
+Note that if the shared log is blockchain or cloud based, the same flow applies, but the recovered gateway derives the new log, rather than the counter-party gateway.
 
 #### 6.2.2 Lock-Evidence  Flow
 If a crash occurs during the lock-evidence flow, the procedure is the same as the transfer initiation flow. However
@@ -434,7 +435,7 @@ These messages inform gateways of the current state of a recovery procedure.
 ODAP-2PC messages follow log format from Section 4.
 
 #### 6.3.1 RECOVER
-A recover message is sent from the crashed gateway to the counterparty gateway, sending its most recent state.
+A recover message is sent from the crashed gateway to the counter-party gateway, sending its most recent state.
 This message type is encoded on the recovery message field of an ODAP log.
 
 The parameters of the recovery message payload consists of the following:
@@ -447,9 +448,9 @@ The parameters of the recovery message payload consists of the following:
 
 
 #### 6.3.2 RECOVER-UDPDATE
-The recover update message is sent by the counterparty gateway after receiving a recover message from a recovered gateway.
+The recover update message is sent by the counter-party gateway after receiving a recover message from a recovered gateway.
 The recovered gateway informs of its current state (via the current state of the log).
-The counterparty gateway now calculates the difference between the log entry corresponding to the received sequence number from the recovered gateway and
+The counter-party gateway now calculates the difference between the log entry corresponding to the received sequence number from the recovered gateway and
 the latest sequence number (corresponding to the latest log entry).
 This state is sent to the recovered gateway.
 
@@ -469,7 +470,7 @@ The parameters of this message consists of the following:
 
 
 #### 6.3.4 RECOVER-SUCCESS
-The recover-ack message is sent by the counterparty gateway to the recovered gateway acknowledging that the state is synchronized.
+The recover-ack message is sent by the counter-party gateway to the recovered gateway acknowledging that the state is synchronized.
 
 The parameters of this message consists of the following:
 
@@ -485,12 +486,12 @@ The parameters of this message consists of the following:
 
 * actions performed: actions performed to rollback a state (e.g., UNLOCK; BURN).
 
-* proofs: TBD.
+* proofs: a lock-evidence proof specific to the DLT [ODAP]
 
-(TBD)
+
 
 #### 6.3.6 ROLLBACK-ACK
-The rollback-ack message is sent by the counterparty gateway to the recovered gateway acknowledging that the rollback has been performed successfully.
+The rollback-ack message is sent by the counter-party gateway to the recovered gateway acknowledging that the rollback has been performed successfully.
 
 The parameters of this message consists of the following:
 
@@ -500,7 +501,7 @@ The parameters of this message consists of the following:
 ### 6.4 Examples 
 
 There are several situations when a crash may occur.
-#### 6.4.1 Crashing before issuing a command to the counterparty gateway
+#### 6.4.1 Crashing before issuing a command to the counter-party gateway
 
 The following figure represents the source gateway (G1) crashing before it issued an init command to the recipient gateway (G2). 
 
@@ -548,7 +549,7 @@ The following figure represents the source gateway (G1) crashing before it issue
      └──┘                           └──┘             └───────┘
 
 
-#### 6.4.2 Crashing after issuing a command to the counterparty gateway
+#### 6.4.2 Crashing after issuing a command to the counter-party gateway
 
 The second scenario requires further synchronization (figure below). At the retrieval of the latest log entry, G1 notices its log is outdated. It updates it upon necessary validation and then communicates its recovery to G2. The process then continues as defined.
 

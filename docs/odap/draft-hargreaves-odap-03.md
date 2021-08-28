@@ -1005,38 +1005,174 @@ The parameters of this message consists of the following:
 
 - client_signature REQUIRED. The digital signature of the client.
 
-##9 Gateway to Gateway Asset Transfer Examples
+## 9 Examples
+We provide examples of a Gateway to Gateway Asset Transfer by access mode. 
 
-### 9.1 Simple Asset Transfer between Two Gateways
-Sender Gateway: Gateway A (GA)
-Receipient Gatewey: Gateway B (GB)
+### 9.1 Direct Mode: Simple Client to Gateway
 
-Access Mode: Direct Mode
+**Participants:**
+Sender Gateway: Gateway 1 (G1)
+Sender client: U1
+Log storage API: Log API
 
+**Access Mode:** Direct Mode
+**Crash Recovery Mechanism:** Self Healing. 
+**Logging model:** decentralized log storage L or local log accessible by G1. 
+**Crash Recovery Strategy:** upon crashing, a gateway waits until it is restarted. Upon restart, it checks its state against the one saved in the decentralized storage or local log. If there are differences, the recovered gateway updates its state.
+
+**Assumptions:**
+Each gateway has an API of each Type (Type-1, Type-2).
+Each gateway has a user connecting to it via API Type-2.
+
+A client-initiated gateway transfer happens as follows:
+
+1. U1 sends a request to G1 to issue a transaction against a DLT.
+2. G1 verifies U1's identity and pre-prepares the transaction. A confirmation is sent to the user.
+3. U1 confirms the transaction and sends it to G1.
+4. G1 logs the decision and issues the transaction.
+5. G1 returns a response to the client.
+
+### 9.2  Direct Mode: Client to Multiple Gateway
+
+**Participants:**
+Sender Gateways: Gateway 1...n (G1, G2, ..., GN)
+Sender client: U1
+Log storage API: Log API
+
+**Access Mode:** Direct Mode: Client to Multiple Gateway
+**Crash Recovery Mechanism:** Self Healing. 
+**Logging model:** decentralized log storage L shared by all gateways. 
+**Crash Recovery Strategy:** upon crashing, a gateway waits until it is restarted. Upon restart, it checks its state against the one saved in the decentralized storage. If there are differences, the recovered gateway updates its state.
+
+**Assumptions:**
+Each gateway has an API of each Type (Type-1, Type-2).
+Each gateway has a user connecting to it via API Type-2.
+
+A client-initiated gateway transfer using multiple gateways happens as follows:
+
+1. U1 sends a request to a set of gateways to issue a set of transactions against a set of DLT.
+2. Each verifies U1's identity and pre-prepares the transaction. A confirmation is sent to the user.
+3. U1 confirms the transaction and sends it to the respective gateway. In case atomic transactions are needed, some synchronization is needed between gateways. The client handles this.
+4. Each gateway logs the decision and issues the transaction.
+5. Each gateway returns a response to the client.
+
+
+
+### 9.3 Client-initiated Gateway to Gateway 
+
+**Participants:**
+Sender Gateway: Gateway 1 (G1)
+Recipient Gateway: Gateway 2 (G2)
+Sender client: U1
+Recipient client: U2
+Log storage API: Log API
+
+**Access Mode:** Client-initiated Gateway to Gateway 
+**Crash Recovery Mechanism:** Self Healing. 
+**Logging model:** decentralized log storage L shared by G1 and G2. 
+**Crash Recovery Strategy:** upon crashing, a gateway waits until it is restarted. Upon restart, it checks its state against the one saved in the decentralized storage. If there are differences, the recovered gateway updates its state.
+
+**Assumptions:**
 Each gateway has an API of each Type (Type-1, Type-2, Type-3).
+Each gateway has a user connecting to it via API Type-2 (U1 and U2 for G1 and G2, respectively).
 
-Each gateway has a user connecting to it via API Type-2 (UA and UB)
+A client-initiated gateway to gateway asset transfers happens as follows:
 
-Crash Recovery: Self Healing
+1. U1 communicates with GA via API Type-2 requesting for a transfer to U2. 
+2. Validation of input occurs (e.g., that U1 has enough amount X of asset Y to be transferred). A confirmation of the transfer is asked to the client.
+3. The client confirms. Otherwise, the transaction is aborted.
+  
 
-1. UA communicates with GA via API Type-2 requesting for a transfer to UB.
+4. G1 asks to initiate an ODAP session with G2 via API Type-1. Provides several validation information (e.g., identity).
+5. G2 accepts to take part in the ODAP session. Otherwise, the session is canceled.
 
-1. GA initiates an ODAP session with GB via API Type-1.
 
-1. GA and GB start the transfer initiation flow phase.
 
-1. Checks are done from GB via API Type-3
+5. G1 and G2 start the transfer initiation flow phase.
+6. Checks are done from G2 via API Type-3
+7. G2 acknowledges that it can continue the session.
+7. G1 asks G2 to start the Lock-Evidence Verification Flow
+8. G2 accepts to take part in the Lock-Evidence Verification Flow. Otherwise, the session is canceled.
 
-1. GA locks an asset on behalf of UA in the Lock-Evidence Verification Flow
+9. G1 locks X amount of asset Y that is to be transferred on behalf of U1 in the Lock-Evidence Verification Flow. The proof is generated.
+10. G1 sends the proof to G2.
+11. G2 logs and validates the proof received by G1 (if possible).
+12. G2 acknowledges this to G1
+13. G1 initiates the Commitment Establishment Flow
+14. G2 commits to the transfer in the Commitment Establishment Flow. (Optionally, G2 verifies the lock at G1 and creates a representation of the asset on the recipient DLT)
 
-1. GB commits to the transfer in the Commitment Establishment Flow. (Optionally, GB verifies the lock at GA, and creates a representation of the asset on the recipient DLT)
+15. G1 and G2 finalize the transfer. 
 
-1. GA and GB finalize the transfer. 
+16. G2 communicates the result to U2.
 
-1. GB communicates the result to UB.
 
-TBD: Sequence diagram
+     ,--.                                     ,--.                               ,--.          ,--.                       
+     |U1|                                     |G1|                               |U2|          |G2|                       
+     `--'                                     `--'                               `--'          `--'                       
+      | [1]: transfer X amount of asset Y to U2|                                  |             |                         
+      | --------------------------------------->                                  |             |                         
+      |                                        |                                  |             |                         
+      |      [2]: transfer is ok. Proceed?     |                                  |             |                         
+      | <---------------------------------------                                  |             |                         
+      |                                        |                                  |             |                         
+      |                 [3]: ok                |                                  |             |                         
+      | --------------------------------------->                                  |             |                         
+      |                                        |                                  |             |                         
+      |                                        |            [4] initiate ODAP session           |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                     [5] ok       |             |                         
+      |                                        | <-----------------------------------------------                         
+      |                                        |                                  |             |                         
+      |                                        |        [6] start transfer initation flow       |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                                  |             |----.                    
+      |                                        |                                  |             |    | [7] validity checks
+      |                                        |                                  |             |<---'                    
+      |                                        |                                  |             |                         
+      |                                        |                     [8] ok       |             |                         
+      |                                        | <-----------------------------------------------                         
+      |                                        |                                  |             |                         
+      |                                        |            [9] start lock-evidence             |                         
+      |                                        |             verification flow    |             |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                     [10] ok      |             |                         
+      |                                        | <-----------------------------------------------                         
+      |                                        |                                  |             |                         
+      |                                        |----.                                           |                         
+      |                                        |    | [11] lock X amount of asset Y             |                         
+      |                                        |<---'                                           |                         
+      |                                        |                                  |             |                         
+      |                                        |                 [12] send proof  |             |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                                  |             |----.                    
+      |                                        |                                  |             |    | [13] store proof.  
+      |                                        |                                  |             |<---'  validate proof    
+      |                                        |                                  |             |                         
+      |                                        |                                  |             |                         
+      |                                        |                [14] transfer ok. |             |                         
+      |                                        | <-----------------------------------------------                         
+      |                                        |                                  |             |                         
+      |                                        |            [15] initiate commitment            |                         
+      |                                        |             establishment flow   |             |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                     [16] ok      |             |                         
+      |                                        | <-----------------------------------------------                         
+      |                                        |                                  |             |                         
+      |                                        |             [17] transfer finalized            |                         
+      |                                        | ----------------------------------------------->                         
+      |                                        |                                  |             |                         
+      |                                        |                     [18] ok      |             |                         
+      |                                        | <-----------------------------------------------                         
+     ,--.                                     ,--.                               ,--.          ,--.                       
+     |U1|                                     |G1|                               |U2|          |G2|                       
+     `--'                                     `--'                               `--'          `--'                       
 
+  
 ## 10.	Security Consideration
 
 Although the current interoperability architecture for blockchain gateways assumes the externalization of the value of assets, as a blockchain system holds an increasing number of virtual assets it becomes attractive to attackers seeking to obtain cryptographic keys of its nodes and its end-users.
